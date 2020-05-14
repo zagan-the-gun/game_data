@@ -1,0 +1,28 @@
+{% extends 'apps/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<ul class='nav nav-tabs'>
+  <li class='nav-item'>
+    <a href='/xxx_book/' class='small nav-link'>エロ本</a>
+  </li>
+  <li class='nav-item'>
+    <a href='/xxx_game/' class='small nav-link active'>エロゲ</a>
+  </li>
+</ul>
+
+
+{% include page_template %}
+{% block js %}
+    {{ block.super }}
+    <script src='{% static 'apps/el-pagination.js' %}'></script>
+    <script>
+        $.endlessPaginate({
+            paginateOnScroll: true,
+            paginateOnScrollMargin: 20
+        });
+    </script>
+{% endblock %}
+
+{% endblock %}
