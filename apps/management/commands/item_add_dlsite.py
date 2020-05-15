@@ -44,10 +44,11 @@ class Command(BaseCommand):
 #                dlsite_image_url = 'https:' + tr.a.find('img', ref='popup_img').get('src')
 #                print('dlsite_image_url: ' + dlsite_image_url)
 
-                dlsite_site_url = tr.a.get('href')
+                _site_url = tr.a.get('href')
+                dlsite_site_url = _site_url.replace('work/=/product_id/', 'dlaf/=/t/s/link/work/aid/zagan/id/')
                 print('dlsite_site_url: ' + dlsite_site_url)
 
-                dlsite_image_url = 'https:' + BeautifulSoup(requests.get(dlsite_site_url).text, 'lxml').find('img', itemprop='image').get('src')
+                dlsite_image_url = 'https:' + BeautifulSoup(requests.get(_site_url).text, 'lxml').find('img', itemprop='image').get('src')
                 print('dlsite_image_url: ' + dlsite_image_url)
 
                 dlsite_description_text = tr.find('dd', class_='work_text').get_text()
@@ -67,7 +68,7 @@ class Command(BaseCommand):
                 dlsite_discount_rate = int(_d.group(1))
                 print('dlsite_discount_rate: ' + str(dlsite_discount_rate))
 
-                spec_list = BeautifulSoup(requests.get(dlsite_site_url).text, 'lxml').find('dl', class_='work_spec_list')
+                spec_list = BeautifulSoup(requests.get(_site_url).text, 'lxml').find('dl', class_='work_spec_list')
                 _mb = re.search(r'([0-9]+\.[0-9]+)MB\n', spec_list.get_text())
                 if _mb is None:
                     dlsite_size = 0
@@ -101,13 +102,11 @@ class Command(BaseCommand):
                 dlsite_title = tr.a.find('img', ref='popup_img').get('alt')
                 print('dlsite_title: ' + dlsite_title)
 
-#                dlsite_image_url = 'https:' + tr.a.find('img', ref='popup_img').get('src')
-#                print('dlsite_image_url: ' + dlsite_image_url)
-
-                dlsite_site_url = tr.a.get('href')
+                _site_url = tr.a.get('href')
+                dlsite_site_url = _site_url.replace('work/=/product_id/', 'dlaf/=/t/s/link/work/aid/zagan/id/')
                 print('dlsite_site_url: ' + dlsite_site_url)
 
-                dlsite_image_url = 'https:' + BeautifulSoup(requests.get(dlsite_site_url).text, 'lxml').find('img', itemprop='image').get('src')
+                dlsite_image_url = 'https:' + BeautifulSoup(requests.get(_site_url).text, 'lxml').find('img', itemprop='image').get('src')
                 print('dlsite_image_url: ' + dlsite_image_url)
 
                 dlsite_description_text = tr.find('dd', class_='work_text').get_text()
@@ -126,8 +125,7 @@ class Command(BaseCommand):
                 dlsite_discount_rate = int(_d.group(1))
                 print('dlsite_discount_rate: ' + str(dlsite_discount_rate))
 
-                #spec_list = BeautifulSoup(requests.get(dlsite_site_url).text, 'lxml').find('dl', class_='work_spec_list')
-                spec_list = BeautifulSoup(requests.get(dlsite_site_url).text, 'lxml').find('table', id='work_outline')
+                spec_list = BeautifulSoup(requests.get(_site_url).text, 'lxml').find('table', id='work_outline')
                 _mb = re.search(r'([0-9]+\.[0-9]+)MB\n', spec_list.get_text())
                 if _mb is None:
                     dlsite_size = 0
