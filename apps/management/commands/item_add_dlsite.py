@@ -41,11 +41,14 @@ class Command(BaseCommand):
                 dlsite_title = tr.a.find('img', ref='popup_img').get('alt')
                 print('dlsite_title: ' + dlsite_title)
 
-                dlsite_image_url = 'https:' + tr.a.find('img', ref='popup_img').get('src')
-                print('dlsite_image_url: ' + dlsite_image_url)
+#                dlsite_image_url = 'https:' + tr.a.find('img', ref='popup_img').get('src')
+#                print('dlsite_image_url: ' + dlsite_image_url)
 
                 dlsite_site_url = tr.a.get('href')
                 print('dlsite_site_url: ' + dlsite_site_url)
+
+                dlsite_image_url = 'https:' + BeautifulSoup(requests.get(dlsite_site_url).text, 'lxml').find('img', itemprop='image').get('src')
+                print('dlsite_image_url: ' + dlsite_image_url)
 
                 dlsite_description_text = tr.find('dd', class_='work_text').get_text()
                 print('dlsite_description_text: ' + dlsite_description_text)
@@ -98,11 +101,14 @@ class Command(BaseCommand):
                 dlsite_title = tr.a.find('img', ref='popup_img').get('alt')
                 print('dlsite_title: ' + dlsite_title)
 
-                dlsite_image_url = 'https:' + tr.a.find('img', ref='popup_img').get('src')
-                print('dlsite_image_url: ' + dlsite_image_url)
+#                dlsite_image_url = 'https:' + tr.a.find('img', ref='popup_img').get('src')
+#                print('dlsite_image_url: ' + dlsite_image_url)
 
                 dlsite_site_url = tr.a.get('href')
                 print('dlsite_site_url: ' + dlsite_site_url)
+
+                dlsite_image_url = 'https:' + BeautifulSoup(requests.get(dlsite_site_url).text, 'lxml').find('img', itemprop='image').get('src')
+                print('dlsite_image_url: ' + dlsite_image_url)
 
                 dlsite_description_text = tr.find('dd', class_='work_text').get_text()
                 print('dlsite_description_text: ' + dlsite_description_text)
