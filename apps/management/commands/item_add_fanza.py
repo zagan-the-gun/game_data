@@ -39,7 +39,7 @@ class Command(BaseCommand):
             if li.find('div', class_='listGenreIco__ico').get_text() in ['コミック', 'ＣＧ']:
                 print(li.find('div', class_='listGenreIco__ico').get_text())
 
-                fanza_site_url = 'https://www.dmm.co.jp' + li.find('div', class_='tileListImg__tmb').find('a').get('href')
+                fanza_site_url = 'https://www.dmm.co.jp' + re.sub('\?.*$', '', li.find('div', class_='tileListImg__tmb').find('a').get('href'))
                 print('fanza_site_url: ' + fanza_site_url)
 
                 # スクレイピング開始
@@ -104,7 +104,7 @@ class Command(BaseCommand):
             if li.find('div', class_='listGenreIco__ico').get_text() in ['ゲーム']:
                 print(li.find('div', class_='listGenreIco__ico').get_text())
 
-                fanza_site_url = 'https://www.dmm.co.jp' + li.find('div', class_='tileListImg__tmb').find('a').get('href')
+                fanza_site_url = 'https://www.dmm.co.jp' + re.sub('\?.*$', '', li.find('div', class_='tileListImg__tmb').find('a').get('href'))
                 print('fanza_site_url: ' + fanza_site_url)
 
                 # スクレイピング開始
