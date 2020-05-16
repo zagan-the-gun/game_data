@@ -49,6 +49,11 @@ class Item(models.Model):
               verbose_name='売価',
               default=0,
           )
+    # 元値
+    original_price=models.PositiveIntegerField(
+              verbose_name='元価',
+              default=0,
+          )
     #販売元
     distributor=models.CharField(
                     verbose_name='販売元',
@@ -77,6 +82,12 @@ class Item(models.Model):
                    blank=True,
                    null=True,
               )
+    # 送料
+    shipping_price=models.PositiveIntegerField(
+                      verbose_name='送料',
+                      blank=True,
+                      null=True,
+                  )
     # 作成日時
     created_at=models.DateTimeField(
                    verbose_name='作成日時',
