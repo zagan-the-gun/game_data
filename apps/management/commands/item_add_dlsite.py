@@ -58,6 +58,10 @@ class Command(BaseCommand):
                 dlsite_price = int(_p.group(1).replace(',', ''))
                 print('dlsite_price: ' + str(dlsite_price))
 
+                _op = re.search(r'([0-9.,]+)円', tr.find('span', class_='strike').get_text())
+                dlsite_original_price = int(_op.group(1).replace(',', ''))
+                print('dlsite_original_price: ' + str(dlsite_original_price))
+
                 _pd = re.search(r'(.*日)', tr.find('span', class_='period_date').get_text())
                 #dlsite_period_at = datetime.datetime.strptime(_pd.group(1), '%Y年%m月%d日').replace(tzinfo=pytz.timezone('Asia/Tokyo'))
                 #dlsite_period_at = datetime.datetime.strptime(_pd.group(1) + ' 23:59:59', '%Y年%m月%d日 %H:%M:%S')
@@ -88,7 +92,7 @@ class Command(BaseCommand):
                 print('dlsite_amino_price: ' + str(dlsite_amino_price))
 
 
-                item=Item.objects.update_or_create(site_url=dlsite_site_url, defaults={'title': dlsite_title, 'image_url': dlsite_image_url, 'site_url': dlsite_site_url, 'description_text': dlsite_description_text, 'amino_price': dlsite_amino_price, 'price': dlsite_price, 'distributor': 'dlsite', 'size': dlsite_size, 'discount_rate': dlsite_discount_rate, 'period_at': dlsite_period_at, 'item_type': Item.ItemType.XXX_GAME})
+                item=Item.objects.update_or_create(site_url=dlsite_site_url, defaults={'title': dlsite_title, 'image_url': dlsite_image_url, 'site_url': dlsite_site_url, 'description_text': dlsite_description_text, 'amino_price': dlsite_amino_price, 'price': dlsite_price, 'original_price': dlsite_original_price, 'distributor': 'dlsite', 'size': dlsite_size, 'discount_rate': dlsite_discount_rate, 'period_at': dlsite_period_at, 'item_type': Item.ItemType.XXX_GAME})
 
 
         print('dlsiteからJSONでエロ本商品情報取得')
@@ -115,6 +119,10 @@ class Command(BaseCommand):
                 _p = re.search(r'([0-9.,]+)円', tr.find('span', class_='work_price discount').get_text())
                 dlsite_price = int(_p.group(1).replace(',', ''))
                 print('dlsite_price: ' + str(dlsite_price))
+
+                _op = re.search(r'([0-9.,]+)円', tr.find('span', class_='strike').get_text())
+                dlsite_original_price = int(_op.group(1).replace(',', ''))
+                print('dlsite_original_price: ' + str(dlsite_original_price))
 
                 _pd = re.search(r'(.*日)', tr.find('span', class_='period_date').get_text())
 #                dlsite_period_at = datetime.datetime.strptime(_pd.group(1), '%Y年%m月%d日').replace(tzinfo=pytz.timezone('Asia/Tokyo'))
@@ -147,6 +155,5 @@ class Command(BaseCommand):
                 print('')
 
 
-                item=Item.objects.update_or_create(site_url=dlsite_site_url, defaults={'title': dlsite_title, 'image_url': dlsite_image_url, 'site_url': dlsite_site_url, 'description_text': dlsite_description_text, 'amino_price': dlsite_amino_price, 'price': dlsite_price, 'distributor': 'dlsite', 'size': dlsite_size, 'discount_rate': dlsite_discount_rate, 'period_at': dlsite_period_at, 'item_type': Item.ItemType.XXX_BOOK})
-
+                item=Item.objects.update_or_create(site_url=dlsite_site_url, defaults={'title': dlsite_title, 'image_url': dlsite_image_url, 'site_url': dlsite_site_url, 'description_text': dlsite_description_text, 'amino_price': dlsite_amino_price, 'price': dlsite_price, 'original_price': dlsite_original_price, 'distributor': 'dlsite', 'size': dlsite_size, 'discount_rate': dlsite_discount_rate, 'period_at': dlsite_period_at, 'item_type': Item.ItemType.XXX_BOOK})
 

@@ -61,13 +61,25 @@
               </span>
             </div>
 
-            <div class='col-6 small'>
+            <u class='col-6 small'>
               {{ m.period_at|date:'Y年m月d日' }}まで
-            </div>
+            </u>
             <div class='col-6 text-right'>
-              <span class='small'>
-                {{ m.price|intcomma }}円/{{ m.size }}MB
-              </span>
+              {% if m.original_price != 0 %}
+                <s class='small'>
+                  {{ m.original_price|intcomma }}円
+                </s>
+                <span class='small text-danger'>
+                  {{ m.price|intcomma }}円
+                </span>
+                <span class='small'>
+                  /{{ m.size }}MB
+                </span>
+              {% else %}
+                <span class='small'>
+                  {{ m.price|intcomma }}円/{{ m.size }}MB
+                </span>
+              {% endif %}
             </div>
 
             <div class='col-6 small d-flex align-items-end py-0'>

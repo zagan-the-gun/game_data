@@ -66,6 +66,11 @@ class Command(BaseCommand):
                 fanza_price = int(_p.group(1).replace(',', ''))
                 print('fanza_price: ' + str(fanza_price))
 
+                # original_priceを取得
+                _p = re.search(r'([0-9.,]+)', site_soup.find('span', class_='priceList__sub priceList__sub--big').get_text())
+                fanza_original_price = int(_p.group(1).replace(',', ''))
+                print('fanza_original_price: ' + str(fanza_original_price))
+
                 # amino_priceを求める
                 _mb = re.search(r'([0-9]+\.[0-9]+)MB', site_soup.find('div', class_='productInformation u-common__clearfix').get_text())
                 if _mb is not None:
@@ -92,7 +97,7 @@ class Command(BaseCommand):
                 print('')
                 print('')
 
-                item=Item.objects.update_or_create(site_url=fanza_site_url, defaults={'title': fanza_title, 'image_url': fanza_image_url, 'site_url': fanza_site_url, 'description_text': fanza_description_text, 'amino_price': fanza_amino_price, 'price': fanza_price, 'distributor': 'fanza', 'size': fanza_size, 'discount_rate': fanza_discount_rate, 'period_at': fanza_period_at, 'item_type': Item.ItemType.XXX_BOOK})
+                item=Item.objects.update_or_create(site_url=fanza_site_url, defaults={'title': fanza_title, 'image_url': fanza_image_url, 'site_url': fanza_site_url, 'description_text': fanza_description_text, 'amino_price': fanza_amino_price, 'price': fanza_price, 'original_price': fanza_original_price, 'distributor': 'fanza', 'size': fanza_size, 'discount_rate': fanza_discount_rate, 'period_at': fanza_period_at, 'item_type': Item.ItemType.XXX_BOOK})
 
 
         print('fanzaからJSONでエロゲ商品情報取得')
@@ -131,6 +136,11 @@ class Command(BaseCommand):
                 fanza_price = int(_p.group(1).replace(',', ''))
                 print('fanza_price: ' + str(fanza_price))
 
+                # original_priceを取得
+                _p = re.search(r'([0-9.,]+)', site_soup.find('span', class_='priceList__sub priceList__sub--big').get_text())
+                fanza_original_price = int(_p.group(1).replace(',', ''))
+                print('fanza_original_price: ' + str(fanza_original_price))
+
                 # amino_priceを求める
                 _mb = re.search(r'([0-9]+\.[0-9]+)MB', site_soup.find('div', class_='productInformation u-common__clearfix').get_text())
                 if _mb is not None:
@@ -157,5 +167,5 @@ class Command(BaseCommand):
                 print('')
                 print('')
 
-                item=Item.objects.update_or_create(site_url=fanza_site_url, defaults={'title': fanza_title, 'image_url': fanza_image_url, 'site_url': fanza_site_url, 'description_text': fanza_description_text, 'amino_price': fanza_amino_price, 'price': fanza_price, 'distributor': 'fanza', 'size': fanza_size, 'discount_rate': fanza_discount_rate, 'period_at': fanza_period_at, 'item_type': Item.ItemType.XXX_GAME})
+                item=Item.objects.update_or_create(site_url=fanza_site_url, defaults={'title': fanza_title, 'image_url': fanza_image_url, 'site_url': fanza_site_url, 'description_text': fanza_description_text, 'amino_price': fanza_amino_price, 'price': fanza_price, 'original_price': fanza_original_price, 'distributor': 'fanza', 'size': fanza_size, 'discount_rate': fanza_discount_rate, 'period_at': fanza_period_at, 'item_type': Item.ItemType.XXX_GAME})
 
