@@ -88,6 +88,11 @@ class Item(models.Model):
                       blank=True,
                       null=True,
                   )
+    # 売り切れ
+    sold_out=models.BooleanField(
+               verbose_name='売り切れ',
+               default=False,
+           )
     # 作成日時
     created_at=models.DateTimeField(
                    verbose_name='作成日時',
