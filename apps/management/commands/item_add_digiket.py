@@ -30,64 +30,104 @@ class Command(BaseCommand):
 #        self.stdout.write(options.__str__())
 
         print('digiket.comからJSONでエロゲ商品情報取得')
-        digiket_url = 'https://api.digiket.com/xml/api/getxml.php?target=4&sort=new&A=%25OFF&ie=UTF-8&xmltype=JSON'
-        digiket_json = json.loads(requests.get(digiket_url).text)
+        #digiket_url = 'https://api.digiket.com/xml/api/getxml.php?target=4&sort=new&A=%25OFF&ie=UTF-8&xmltype=JSON'
+        #digiket_json = json.loads(requests.get(digiket_url).text)
+        digiket_url = 'https://www.digiket.com/a/result/_data/A=%93%AF%90l%83Q%81%5B%83%80/view=list/camp=on/sort=week/'
 
-        for d in digiket_json:
+        cookie = {'adult_check': '1'}
+        soup = BeautifulSoup(requests.get(digiket_url, cookies=cookie).text, 'lxml')
 
-            digiket_title            = d['trade_name_raw']
-            digiket_image_url        = d['trade_cg_1']
-            digiket_site_url         = d['url']
-            digiket_description_text = d['intro']
-            digiket_price            = d['price']
-            digiket_amino_price      = d['price']
+        for i in soup.find_all('div', class_='item-box'):
+            digiket_site_url        = 'https://www.digiket.com' + i.find('a').get('href') + 'AFID=zagan/'
+            print('digiket_site_url: ' + str(digiket_site_url))
+
+            digiket_discount_rate   = re.search(r'([0-9]+)', i.find('span', class_='item-title_prcent').get_text()).group(1)
+            print('digiket_discount_rate: ' + str(digiket_discount_rate))
+
+            _pd                     = re.search(r'([0-9]+月[0-9]+日)', i.find('div', class_='discount').get_text())
+            digiket_period_at = pytz.timezone('Asia/Tokyo').localize(datetime.datetime.strptime('2020年' + _pd.group(1) + ' 23:59:59', '%Y年%m月%d日 %H:%M:%S'))
+            print('digiket_period_at: ' + str(  digiket_period_at))
+
+            digiket_title           = i.find('dt', class_='item_name').find('a').get_text()
+            print('digiket_title: ' + digiket_title)
+
+            digiket_price           = re.search(r'([0-9]+)円', i.find('dt', class_='item-price-box').find('strong').get_text()).group(1)
+            print('digiket_price: ' + str(digiket_price))
 
             # amino_priceを求める
             detail_url = digiket_site_url
             cookie = {'adult_check': '1'}
+            _text = requests.get(digiket_site_url, cookies=cookie).text
 
-            _b = re.search(r'ファイル容量：</div><div class="sub-data2">([0-9.,]+)?\s*byte', requests.get(digiket_site_url, cookies=cookie).text)
+            _b = re.search(r'ファイル容量：</div><div class="sub-data2">([0-9.,]+)?\s*byte', _text)
             b = int(_b.group(1).replace(',', ''))
-            mb = math.ceil((b/1024)/1024)
-            digiket_amino_price = math.ceil(int(digiket_price)/mb)
+            digiket_size = math.ceil((b/1024)/1024)
+            print('digiket_size: ' + str(digiket_size))
 
-#            print('digiket_site_url: ' + digiket_site_url)
-#            print('digiket_price: ' + digiket_price)
-#            print('digiket_amino_price' + str(digiket_amino_price))
-#            print('')
+            digiket_amino_price = math.ceil(int(digiket_price)/digiket_size)
+            print('digiket_amino_price: ' + str(digiket_amino_price))
 
-            item=Item.objects.update_or_create(site_url=digiket_site_url, defaults={'title': digiket_title, 'image_url': digiket_image_url, 'site_url': digiket_site_url, 'description_text': digiket_description_text, 'amino_price': digiket_amino_price, 'price': digiket_price, 'distributor': 'digiket', 'item_type': Item.ItemType.XXX_GAME})
-        print('add: ' + str(len(digiket_json)))
+            digiket_image_url = BeautifulSoup(_text, 'lxml').find('div', class_='item').find('img').get('src')
+            print('digiket_image_url: ' + digiket_image_url)
+
+            digiket_original_price = re.search(r'([0-9]+)円', i.find('dt', class_='item-price-box').find('s').get_text()).group(1)
+            print('digiket_original_price: ' + str(digiket_original_price))
+
+            digiket_description_text = i.find('dd', class_='item_intro').get_text()
+            print('digiket_description_text: ' + str(digiket_description_text))
+            print('')
+            print('')
+
+            item=Item.objects.update_or_create(site_url=digiket_site_url, defaults={'title': digiket_title, 'image_url': digiket_image_url, 'site_url': digiket_site_url, 'description_text': digiket_description_text, 'amino_price': digiket_amino_price, 'price': digiket_price, 'original_price': digiket_original_price, 'distributor': 'digiket', 'size': digiket_size, 'discount_rate': digiket_discount_rate, 'period_at': digiket_period_at, 'item_type': Item.ItemType.XXX_GAME})
 
 
         print('digiket.comからJSONでエロ本商品情報取得')
-        digiket_url = 'https://api.digiket.com/xml/api/getxml.php?target=5&sort=new&A=%25OFF&ie=UTF-8&xmltype=JSON'
-        digiket_json = json.loads(requests.get(digiket_url).text)
+        #digiket_url = 'https://www.digiket.com/a/result/_data/A=%93%AF%90l%83Q%81%5B%83%80/view=list/camp=on/sort=week/'
+        digiket_url = 'https://www.digiket.com/a/result/_data/genre=%83R%83~%83b%83N/view=list/limit=30/camp=on/sort=week/'
 
-        for d in digiket_json:
+        cookie = {'adult_check': '1'}
+        soup = BeautifulSoup(requests.get(digiket_url, cookies=cookie).text, 'lxml')
 
-            digiket_title            = d['trade_name_raw']
-            digiket_image_url        = d['trade_cg_1']
-            digiket_site_url         = d['url']
-            digiket_description_text = d['intro']
-            digiket_price            = d['price']
-            digiket_amino_price      = d['price']
+        for i in soup.find_all('div', class_='item-box'):
+            digiket_site_url        = 'https://www.digiket.com' + i.find('a').get('href') + 'AFID=zagan/'
+            print('digiket_site_url: ' + str(digiket_site_url))
+
+            digiket_discount_rate   = re.search(r'([0-9]+)', i.find('span', class_='item-title_prcent').get_text()).group(1)
+            print('digiket_discount_rate: ' + str(digiket_discount_rate))
+
+            _pd                     = re.search(r'([0-9]+月[0-9]+日)', i.find('div', class_='discount').get_text())
+            digiket_period_at = pytz.timezone('Asia/Tokyo').localize(datetime.datetime.strptime('2020年' + _pd.group(1) + ' 23:59:59', '%Y年%m月%d日 %H:%M:%S'))
+            print('digiket_period_at: ' + str(  digiket_period_at))
+
+            digiket_title           = i.find('dt', class_='item_name').find('a').get_text()
+            print('digiket_title: ' + digiket_title)
+
+            digiket_price           = re.search(r'([0-9]+)円', i.find('dt', class_='item-price-box').find('strong').get_text()).group(1)
+            print('digiket_price: ' + str(digiket_price))
 
             # amino_priceを求める
-            # ページの前にある数字を取得
             detail_url = digiket_site_url
             cookie = {'adult_check': '1'}
-            for i in sorted(re.findall(r'([0-9]+)ページ', requests.get(digiket_site_url, cookies=cookie).text), key=int, reverse=True):
-                if int(i) > 1:
-                    digiket_amino_price = math.ceil(int(digiket_price)/int(i))
-#                    print('page: ' + i)
-                    break
+            _text = requests.get(digiket_site_url, cookies=cookie).text
 
-#            print('digiket_site_url: ' + digiket_site_url)
-#            print('digiket_price: ' + digiket_price)
-#            print('digiket_amino_price: ' + str(digiket_amino_price))
-#            print('')
+            _b = re.search(r'ファイル容量：</div><div class="sub-data2">([0-9.,]+)?\s*byte', _text)
+            b = int(_b.group(1).replace(',', ''))
+            digiket_size = math.ceil((b/1024)/1024)
+            print('digiket_size: ' + str(digiket_size))
 
-            item=Item.objects.update_or_create(site_url=digiket_site_url, defaults={'title': digiket_title, 'image_url': digiket_image_url, 'site_url': digiket_site_url, 'description_text': digiket_description_text, 'amino_price': digiket_amino_price, 'price': digiket_price, 'distributor': 'digiket', 'item_type': Item.ItemType.XXX_BOOK})
-        print('add: ' + str(len(digiket_json)))
+            digiket_amino_price = math.ceil(int(digiket_price)/digiket_size)
+            print('digiket_amino_price: ' + str(digiket_amino_price))
+
+            digiket_image_url = BeautifulSoup(_text, 'lxml').find('div', class_='item').find('img').get('src')
+            print('digiket_image_url: ' + digiket_image_url)
+
+            digiket_original_price = re.search(r'([0-9]+)円', i.find('dt', class_='item-price-box').find('s').get_text()).group(1)
+            print('digiket_original_price: ' + str(digiket_original_price))
+
+            digiket_description_text = i.find('dd', class_='item_intro').get_text()
+            print('digiket_description_text: ' + str(digiket_description_text))
+            print('')
+            print('')
+
+            item=Item.objects.update_or_create(site_url=digiket_site_url, defaults={'title': digiket_title, 'image_url': digiket_image_url, 'site_url': digiket_site_url, 'description_text': digiket_description_text, 'amino_price': digiket_amino_price, 'price': digiket_price, 'original_price': digiket_original_price, 'distributor': 'digiket', 'size': digiket_size, 'discount_rate': digiket_discount_rate, 'period_at': digiket_period_at, 'item_type': Item.ItemType.XXX_BOOK})
 
