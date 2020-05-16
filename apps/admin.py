@@ -15,9 +15,19 @@ class ItemAdmin(admin.ModelAdmin):
 #        ('Date information', {'fields': ['release_date'], 'classes': ['collapse']}),
 #    ]
 #    inlines = [PlatformInline]
-    list_display = ('pk', 'title', 'amino_price', 'price', 'distributor', 'created_at', 'updated_at', 'active')
+    list_display = ('pk', 'title', 'item_type', 'amino_price', 'price', 'distributor', 'created_at', 'updated_at', 'active')
 #    list_filter = ['release_date']
     search_fields = ['title', 'description_text', 'distributor']
+
+    actions = ['deactive', 'active']
+    def deactive(self, request, queryset):
+        queryset.update(active=False)
+    deactive.short_description = 'ActiveをFalseに'
+
+    def active(self, request, queryset):
+        queryset.update(active=True)
+    active.short_description = 'ActiveをTrueに'
+
 
 class TweetAccountAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'active')
