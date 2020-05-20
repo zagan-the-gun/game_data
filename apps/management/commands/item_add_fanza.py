@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 
 import datetime
 import pytz
+import urllib.parse
 
 
 class Command(BaseCommand):
@@ -39,13 +40,14 @@ class Command(BaseCommand):
             if li.find('div', class_='listGenreIco__ico').get_text() in ['コミック', 'ＣＧ']:
                 print(li.find('div', class_='listGenreIco__ico').get_text())
 
-                fanza_site_url = 'https://www.dmm.co.jp' + re.sub('\?.*$', '', li.find('div', class_='tileListImg__tmb').find('a').get('href'))
+                _site_url = 'https://www.dmm.co.jp' + re.sub('\?.*$', '', li.find('div', class_='tileListImg__tmb').find('a').get('href'))
+                fanza_site_url = 'https://al.dmm.co.jp/?lurl=' + urllib.parse.quote(_site_url) + '&af_id=zagan-001&ch=toolbar&ch_id=link'
                 print('fanza_site_url: ' + fanza_site_url)
 
                 # スクレイピング開始
-                detail_url = fanza_site_url #不要？
+                #detail_url = _site_url #不要？
                 cookie = {'adult_check': '1'}
-                site_content = requests.get(fanza_site_url, cookies=cookie).text
+                site_content = requests.get(_site_url, cookies=cookie).text
                 site_soup = BeautifulSoup(site_content, 'lxml')
 
                 # titlenを取得
@@ -93,7 +95,6 @@ class Command(BaseCommand):
                 fanza_image_url = site_soup.find('ul', class_='productPreview').find('a').get('href')
                 print('fanza_image_url: ' + fanza_image_url)
 
-
                 print('')
                 print('')
 
@@ -109,13 +110,14 @@ class Command(BaseCommand):
             if li.find('div', class_='listGenreIco__ico').get_text() in ['ゲーム']:
                 print(li.find('div', class_='listGenreIco__ico').get_text())
 
-                fanza_site_url = 'https://www.dmm.co.jp' + re.sub('\?.*$', '', li.find('div', class_='tileListImg__tmb').find('a').get('href'))
+                _site_url = 'https://www.dmm.co.jp' + re.sub('\?.*$', '', li.find('div', class_='tileListImg__tmb').find('a').get('href'))
+                fanza_site_url = 'https://al.dmm.co.jp/?lurl=' + urllib.parse.quote(_site_url) + '&af_id=zagan-001&ch=toolbar&ch_id=link'
                 print('fanza_site_url: ' + fanza_site_url)
 
                 # スクレイピング開始
-                detail_url = fanza_site_url #不要？
+                #detail_url = _site_url #不要？
                 cookie = {'adult_check': '1'}
-                site_content = requests.get(fanza_site_url, cookies=cookie).text
+                site_content = requests.get(_site_url, cookies=cookie).text
                 site_soup = BeautifulSoup(site_content, 'lxml')
 
                 # titlenを取得
