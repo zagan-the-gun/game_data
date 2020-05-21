@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Item
 import datetime
 import pytz
@@ -8,21 +8,78 @@ from django.core import serializers
 
 from el_pagination.decorators import page_template
 
+from django.http import Http404
+
+
+XXX    = ['xxx.stock-news.work', 'stg-xxx.stock-news.work']
+KAISEN = ['kaisen.stock-news.work', 'stg-kaisen.stock-news.work']
+
+def index(request):
+    print(request.get_host())
+    if request.get_host() in XXX:
+        return redirect('xxx_book/')
+
+    elif request.get_host() in KAISEN:
+        return redirect('kaisen_kani/')
+
+    else:
+        return redirect('kaisen_kani/')
+
 
 def about(request):
     return render(request, 'apps/about.html')
 
+
+@page_template('apps/index_simple_page.html')
+def index_kaisen(request, template='apps/index_simple.html', extra_context=None):
+    # ドメインチェック
+    if request.get_host() not in KAISEN:
+        raise Http404
+
+    kaisen_kani_active = False
+    kaisen_ebi_active = False
+    kaisen_kaki_active = False
+    if request.path == '/kaisen_kani/':
+        kaisen_kani_active = True
+        item_type=Item.ItemType.KAISEN_KANI
+    elif request.path == '/kaisen_ebi/':
+        kaisen_ebi_active = True
+        item_type=Item.ItemType.KAISEN_EBI
+    elif request.path == '/kaisen_kaki/':
+        kaisen_kaki_active = True
+        item_type=Item.ItemType.KAISEN_KAKI
+
+    if request.method == 'GET':
+        TODATE = datetime.datetime.now()
+        LAST_DATE = datetime.datetime.now()-datetime.timedelta(days=5)
+
+        item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), item_type=item_type, active=True).order_by('amino_price', '-updated_at')
+
+        item_types = []
+        item_types.append({'value': Item.ItemType.KAISEN_KANI.value, 'label': Item.ItemType.KAISEN_KANI.label, 'url': '/kaisen_kani/', 'is_active': kaisen_kani_active })
+        item_types.append({'value': Item.ItemType.KAISEN_EBI.value, 'label': Item.ItemType.KAISEN_EBI.label, 'url': '/kaisen_ebi/', 'is_active': kaisen_ebi_active })
+        item_types.append({'value': Item.ItemType.KAISEN_KAKI.value, 'label': Item.ItemType.KAISEN_KAKI.label, 'url': '/kaisen_kaki/', 'is_active': kaisen_kaki_active })
+        context = {
+                'item_types': item_types,
+                'item':      item_list,
+                }
+
+        if extra_context is not None:
+            context.update(extra_context)
+
+        return render(request, template, context)
+
+
 @page_template('apps/index_xxx_game_page.html')
 def index_xxx_game(request, template='apps/index_xxx_game.html', extra_context=None):
+    # ドメインチェック
+    if request.get_host() not in XXX:
+        raise Http404
+
     if request.method == 'GET':
-#        todate = str(datetime.datetime.today())
         TODATE = datetime.datetime.now()
         LAST_DATE = datetime.datetime.now()+datetime.timedelta(weeks=48)
-#        last_week_date = str(datetime.datetime.today()-datetime.timedelta(days=2))
 
-        #item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), item_type=Item.ItemType.XXX_GAME, active=True).order_by('-updated_at', 'amino_price')
-        print(TODATE)
-        print(LAST_DATE)
         item_list = Item.objects.filter(period_at__range=(TODATE, LAST_DATE), amino_price__range=('0', '1000000'), item_type=Item.ItemType.XXX_GAME, active=True).order_by('period_at', 'amino_price')
 
         context = {
@@ -34,8 +91,13 @@ def index_xxx_game(request, template='apps/index_xxx_game.html', extra_context=N
 
         return render(request, template, context)
 
+
 @page_template('apps/index_xxx_book_page.html')
 def index_xxx_book(request, template='apps/index_xxx_book.html', extra_context=None):
+    # ドメインチェック
+    if request.get_host() not in XXX:
+        raise Http404
+
     if request.method == 'GET':
         TODATE = pytz.timezone('Asia/Tokyo').localize(datetime.datetime.now())
         LAST_DATE = pytz.timezone('Asia/Tokyo').localize(datetime.datetime.now()+datetime.timedelta(weeks=48))

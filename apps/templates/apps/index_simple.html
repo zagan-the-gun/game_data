@@ -1,0 +1,29 @@
+{% extends 'apps/base_kaisen.html' %}
+{% load static %}
+{% block content %}
+
+{{ item_type.label }}
+<ul class='nav nav-tabs'>
+  {% for it in item_types %}
+  <li class='nav-item'>
+    <a href='{{ it.url }}' class='small nav-link {{ it.is_active|yesno:"active, "}} '>
+      {{ it.label }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+
+{% include page_template %}
+{% block js %}
+    {{ block.super }}
+    <script src='{% static 'apps/el-pagination.js' %}'></script>
+    <script>
+        $.endlessPaginate({
+            paginateOnScroll: true,
+            paginateOnScrollMargin: 20
+        });
+    </script>
+{% endblock %}
+
+{% endblock %}

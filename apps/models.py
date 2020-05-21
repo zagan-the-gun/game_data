@@ -10,6 +10,9 @@ class Item(models.Model):
         XXX_GAME = 1, 'エロゲ'
         XXX_BOOK = 2, 'エロ本'
         XXX_MOVIE = 3, 'エロ動画'
+        KAISEN_KANI = 10, 'カニ'
+        KAISEN_EBI = 11, 'エビ'
+        KAISEN_KAKI = 12, 'カキ'
 
     #商品タイトル
     title=models.CharField(

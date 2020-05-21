@@ -15,14 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from apps.views import index_xxx_game, index_xxx_book, index_thermometer, api, about
+from apps.views import index_xxx_game, index_xxx_book, api, about, index, index_kaisen
+
 
 urlpatterns = [
-    path('', index_xxx_book, name='index_xxx_book'),
+    path('', index, name='index'),
     path('xxx_book/', index_xxx_book, name='index_xxx_book'),
     path('xxx_game/', index_xxx_game, name='index_xxx_game'),
-    path('thermometer/', index_thermometer, name='index_thermometer'),
-#    path('api/', api, name='api'),
+    path('kaisen_kani/', index_kaisen, name='index_kaisen'),
+    path('kaisen_ebi/', index_kaisen, name='index_kaisen'),
+    path('kaisen_kaki/', index_kaisen, name='index_kaisen'),
+    #path('api/', api, name='api'),
     path('about/', about, name='about'),
     path('admin/', admin.site.urls),
 ]
+
