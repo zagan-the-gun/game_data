@@ -15,7 +15,6 @@ XXX    = ['xxx.stock-news.work', 'stg-xxx.stock-news.work']
 KAISEN = ['kaisen.stock-news.work', 'stg-kaisen.stock-news.work']
 
 def index(request):
-    print(request.get_host())
     if request.get_host() in XXX:
         return redirect('xxx_book/')
 
@@ -27,7 +26,11 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'apps/about.html')
+    if request.get_host() in XXX:
+        return render(request, 'apps/about.html')
+
+    elif request.get_host() in KAISEN:
+        return render(request, 'apps/kaisen_about.html')
 
 
 @page_template('apps/index_simple_page.html')

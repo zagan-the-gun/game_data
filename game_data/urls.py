@@ -27,6 +27,7 @@ urlpatterns = [
     path('kaisen_kaki/', index_kaisen, name='index_kaisen'),
     #path('api/', api, name='api'),
     path('about/', about, name='about'),
+    path('kaisen_about/', about, name='about'),
     path('admin/', admin.site.urls),
 ]
 
