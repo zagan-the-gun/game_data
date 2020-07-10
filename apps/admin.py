@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Item, TweetAccount, TweetSchedule, LargeCategory, MediumCategory, LittleCategory, SearchWord, Site
+from .models import Item, TweetAccount, TweetSchedule, LargeCategory, MediumCategory, SmallCategory, SearchWord, Site
 
 
 class ItemAdmin(admin.ModelAdmin):
@@ -50,7 +50,7 @@ class MediumCategoryAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'label', 'is_view')
     search_fields = ['name', 'label']
 
-class LittleCategoryAdmin(admin.ModelAdmin):
+class SmallCategoryAdmin(admin.ModelAdmin):
     list_display = ('pk', 'medium_category', 'name', 'label', 'tag_list', 'is_view')
     search_fields = ['name', 'label', 'tags__name']
 
@@ -84,7 +84,7 @@ admin.site.register(TweetAccount, TweetAccountAdmin)
 admin.site.register(TweetSchedule, TweetScheduleAdmin)
 admin.site.register(LargeCategory, LargeCategoryAdmin)
 admin.site.register(MediumCategory, MediumCategoryAdmin)
-admin.site.register(LittleCategory, LittleCategoryAdmin)
+admin.site.register(SmallCategory, SmallCategoryAdmin)
 #admin.site.register(Tag, TagAdmin)
 admin.site.register(SearchWord, SearchWordAdmin)
 admin.site.register(Site, SiteAdmin)

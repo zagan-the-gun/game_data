@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Item, LargeCategory, MediumCategory, LittleCategory, Site
+from .models import Item, LargeCategory, MediumCategory, SmallCategory, Site
 import datetime
 import pytz
 from django.http import HttpResponse
@@ -62,9 +62,9 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
             medium_category = MediumCategory.objects.filter(is_view = True)[:1][0]
 
         if s_category is not None:
-            little_category = LittleCategory.objects.get(name = s_category)
+            small_category = SmallCategory.objects.get(name = s_category)
         else:
-            little_category = LittleCategory.objects.filter(medium_category = medium_category, is_view = True)[:1][0]
+            small_category = SmallCategory.objects.filter(medium_category = medium_category, is_view = True)[:1][0]
 
         # カテゴリリスト取得
         print(l_category)
@@ -72,18 +72,18 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
         print(s_category)
         large_category = LargeCategory.objects.get(name = l_category)
         medium_category_list = MediumCategory.objects.filter(large_category = large_category)
-        little_category_list = LittleCategory.objects.filter(medium_category = medium_category)
+        small_category_list = SmallCategory.objects.filter(medium_category = medium_category)
 
         TODATE = datetime.datetime.now()
         LAST_DATE = datetime.datetime.now()-datetime.timedelta(days=5)
 
-        #item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[u", ".join(lc.name for lc in little_category.tags.all())], active=True).order_by('amino_price', '-updated_at').distinct()
-#        print(little_category.tags.all())
-#        print(u", ".join(lc.name for lc in little_category.tags.all()))
+        #item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[u", ".join(lc.name for lc in small_category.tags.all())], active=True).order_by('amino_price', '-updated_at').distinct()
+#        print(small_category.tags.all())
+#        print(u", ".join(lc.name for lc in small_category.tags.all()))
 
         print('DEBUG DEBUG DEBUG tags: ')
-        print(little_category)
-        tag_list = u", ".join(lc.name for lc in little_category.tags.all())
+        print(small_category)
+        tag_list = u", ".join(lc.name for lc in small_category.tags.all())
         print(tag_list)
         item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[tag_list], active=True).order_by('amino_price', '-updated_at').distinct()
         print('DEBUG DEBUG DEBUG item_list : ')
@@ -94,9 +94,9 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
                     'site'                : site,
                     'large_category'      : large_category,
                     'medium_category_list': medium_category_list,
-                    'little_category_list': little_category_list,
+                    'small_category_list': small_category_list,
                     'medium_category'     : medium_category,
-                    'little_category'     : little_category,
+                    'small_category'     : small_category,
                     'item'                : item_list,
                   }
 
