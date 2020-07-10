@@ -33,6 +33,9 @@ class Site(models.Model):
                    verbose_name='更新日時',
                    auto_now=True,
                )
+    def __str__(self):
+       return str(self.name)
+
 
 class LargeCategory(models.Model):
     class Meta:
