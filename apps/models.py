@@ -95,9 +95,9 @@ class MediumCategory(models.Model):
     def __str__(self):
        return str(self.label)
 
-class LittleCategory(models.Model):
+class SmallCategory(models.Model):
     class Meta:
-        verbose_name_plural='リトルカテゴリ'
+        verbose_name_plural='スモールカテゴリ'
 
     # ミディアムカテゴリ
     medium_category = models.ForeignKey(
@@ -106,13 +106,13 @@ class LittleCategory(models.Model):
             on_delete=models.DO_NOTHING
           )
     name = models.CharField(
-             verbose_name='リトルカテゴリ名',
+             verbose_name='スモールカテゴリ名',
              max_length=200,
              blank=False,
              null=False,
            )
     label = models.CharField(
-              verbose_name='リトルカテゴリラベル',
+              verbose_name='スモールカテゴリラベル',
               max_length=200,
               blank=False,
               null=False,
