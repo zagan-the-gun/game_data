@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from apps.views import index_xxx_game, index_xxx_book, api, about, index, index_kaisen
+from apps.views import index_xxx_game, index_xxx_book, api, about, index, index_kaisen, index_default, index_large_default
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 
 
 urlpatterns = [
@@ -29,5 +33,12 @@ urlpatterns = [
     path('about/', about, name='about'),
     path('kaisen_about/', about, name='about'),
     path('admin/', admin.site.urls),
+    path('stock-news/', index_large_default, name='index_large_default'),
+    path('stock-news/<str:l_category>/', index_default, name='index_default'),
+    path('stock-news/<str:l_category>/<str:m_category>/', index_default, name='index_default'),
+    path('stock-news/<str:l_category>/<str:m_category>/<str:s_category>/', index_default, name='index_default'),
 ]
+
+#urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

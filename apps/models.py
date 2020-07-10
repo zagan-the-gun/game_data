@@ -1,10 +1,160 @@
 from django.db import models
 from enum import Enum
+from taggit.managers import TaggableManager
 
+
+class Site(models.Model):
+    class Meta:
+        verbose_name_plural='サイト'
+
+    name = models.CharField(
+             verbose_name='サイト名',
+             max_length=200,
+             blank=False,
+             null=False,
+           )
+    image = models.ImageField(
+              verbose_name='スクエアロゴ',
+              upload_to='images/',
+            )
+    favicon_32x32 = models.ImageField(
+              verbose_name='ファビコン32x32',
+              upload_to='images/',
+            )
+    favicon_16x16 = models.ImageField(
+              verbose_name='ファビコン16x16',
+              upload_to='images/',
+            )
+    created_at=models.DateTimeField(
+                   verbose_name='作成日時',
+                   auto_now_add=True,
+               )
+    updated_at=models.DateTimeField(
+                   verbose_name='更新日時',
+                   auto_now=True,
+               )
+
+class LargeCategory(models.Model):
+    class Meta:
+        verbose_name_plural='ラージカテゴリ'
+
+    name = models.CharField(
+             verbose_name='ラージカテゴリ名',
+             max_length=200,
+             blank=False,
+             null=False,
+           )
+    label = models.CharField(
+              verbose_name='ラージカテゴリラベル',
+              max_length=200,
+              blank=False,
+              null=False,
+            )
+    image = models.ImageField(
+              verbose_name='画像',
+              upload_to='images/',
+            )
+    is_view = models.BooleanField(
+                verbose_name='表示フラグ',
+                default=True,
+              )
+
+    def __str__(self):
+       return str(self.label)
+
+class MediumCategory(models.Model):
+    class Meta:
+        verbose_name_plural='ミディアムカテゴリ'
+
+    # ラージカテゴリ
+    large_category = models.ForeignKey(
+            'LargeCategory', 
+            verbose_name='ラージカテゴリ',
+            on_delete=models.DO_NOTHING
+          )
+    name = models.CharField(
+             verbose_name='ミディアムカテゴリ名',
+             max_length=200,
+             blank=False,
+             null=False,
+           )
+    label = models.CharField(
+              verbose_name='ミディアムカテゴリラベル',
+              max_length=200,
+              blank=False,
+              null=False,
+            )
+    is_view = models.BooleanField(
+                verbose_name='表示フラグ',
+                default=True,
+              )
+
+    def __str__(self):
+       return str(self.label)
+
+class LittleCategory(models.Model):
+    class Meta:
+        verbose_name_plural='リトルカテゴリ'
+
+    # ミディアムカテゴリ
+    medium_category = models.ForeignKey(
+            'MediumCategory', 
+            verbose_name='ミディアムカテゴリ',
+            on_delete=models.DO_NOTHING
+          )
+    name = models.CharField(
+             verbose_name='リトルカテゴリ名',
+             max_length=200,
+             blank=False,
+             null=False,
+           )
+    label = models.CharField(
+              verbose_name='リトルカテゴリラベル',
+              max_length=200,
+              blank=False,
+              null=False,
+            )
+    tags = TaggableManager(
+             blank=True
+           )
+    is_view = models.BooleanField(
+                verbose_name='表示フラグ',
+                default=True,
+              )
+
+    def __str__(self):
+       return str(self.label)
+
+class ItemType(models.IntegerChoices):
+    XXX_GAME = 1, 'エロゲ'
+    XXX_BOOK = 2, 'エロ本'
+    XXX_MOVIE = 3, 'エロ動画'
+    KAISEN_KANI = 10, 'カニ'
+    KAISEN_EBI = 11, 'エビ'
+    KAISEN_KAKI = 12, 'カキ'
+
+class SearchWord(models.Model):
+    class Meta:
+        verbose_name_plural='検索ワード'
+
+    #検索ワード
+    word=models.CharField(
+           verbose_name='検索ワード',
+           max_length=200,
+           blank=False,
+           null=False,
+         )
+    #タグ
+    tags = TaggableManager(
+             blank=True
+           )
+
+    def __int__(self):
+       return str(self.tag)
 
 class Item(models.Model):
     class Meta:
-        verbose_name_plural="アイテム"
+        verbose_name_plural='アイテム'
 
     class ItemType(models.IntegerChoices):
         XXX_GAME = 1, 'エロゲ'
@@ -65,10 +215,10 @@ class Item(models.Model):
                     max_length=10,
                 )
     #アイテムタイプ
-    item_type=models.PositiveIntegerField(
-                  verbose_name='アイテムタイプ',
-                  choices=ItemType.choices,
-              )
+#    item_type=models.PositiveIntegerField(
+#                verbose_name='アイテムタイプ',
+#                choices=ItemType.choices,
+#              )
     # サイズ
     size=models.PositiveIntegerField(
              verbose_name='サイズ',
@@ -96,6 +246,9 @@ class Item(models.Model):
                verbose_name='売り切れ',
                default=False,
            )
+    tags = TaggableManager(
+             blank=True
+           )
     # 作成日時
     created_at=models.DateTimeField(
                    verbose_name='作成日時',
@@ -118,7 +271,7 @@ class Item(models.Model):
 
 class TweetAccount(models.Model):
     class Meta:
-        verbose_name_plural="ツイートアカウント"
+        verbose_name_plural='ツイートアカウント'
 
     # 名前
     name=models.CharField(
@@ -178,7 +331,7 @@ class TweetAccount(models.Model):
 
 class TweetSchedule(models.Model):
     class Meta:
-        verbose_name_plural="ツイートスケジュール"
+        verbose_name_plural='ツイートスケジュール'
 
     # ツイートアカウント
     tweet_account=models.ForeignKey(

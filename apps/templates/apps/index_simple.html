@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-{{ item_type.label }}
+<!--
 <ul class='nav nav-tabs'>
   {% for it in item_types %}
   <li class='nav-item'>
@@ -12,7 +12,25 @@
   </li>
   {% endfor %}
 </ul>
+-->
 
+<ul class='nav nav-tabs'>
+  {% for ig in item_groups %}
+  <li class='nav-item'>
+    <a href='{{ ig.url }}' class='small nav-link {{ ig.is_active }} '>
+      {{ ig.label }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+{% for it in item_types %}
+<button type='button' class='btn btn-primary rounded-pill m-2'>
+  <div class='small'>
+    {{ it.label }}
+  </div>
+</button>
+{% endfor %}
 
 {% include page_template %}
 {% block js %}

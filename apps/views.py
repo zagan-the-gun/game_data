@@ -1,15 +1,11 @@
 from django.shortcuts import render, redirect
-from .models import Item
+from .models import Item, LargeCategory, MediumCategory, LittleCategory, Site
 import datetime
 import pytz
-
 from django.http import HttpResponse
 from django.core import serializers
-
 from el_pagination.decorators import page_template
-
 from django.http import Http404
-
 
 XXX    = ['xxx.stock-news.work', 'stg-xxx.stock-news.work']
 KAISEN = ['kaisen.stock-news.work', 'stg-kaisen.stock-news.work']
@@ -30,7 +26,85 @@ def about(request):
         return render(request, 'apps/about.html')
 
     elif request.get_host() in KAISEN:
-        return render(request, 'apps/kaisen_about.html')
+        site = Site.objects.get(pk=1)
+        d = {
+          'site': site,
+        }
+        return render(request, 'apps/kaisen_about.html', d)
+
+
+def index_large_default(request):
+    if request.get_host() not in KAISEN:
+        raise Http404
+
+    if request.method == 'GET':
+
+        site = Site.objects.get(pk=1)
+        large_category_list = LargeCategory.objects.filter(is_view = True)
+        d = {
+          'site': site,
+          'large_category_list': large_category_list,
+        }
+        return render(request, 'apps/index_large_default.html', d)
+
+@page_template('apps/index_default_page.html')
+def index_default(request, l_category, m_category=None, s_category=None, template='apps/index_default.html', extra_context=None):
+    # ドメインチェック
+    if request.get_host() not in KAISEN:
+        raise Http404
+
+    if request.method == 'GET':
+
+        # カテゴリ取得
+        if m_category is not None:
+            medium_category = MediumCategory.objects.get(name = m_category)
+        else:
+            medium_category = MediumCategory.objects.filter(is_view = True)[:1][0]
+
+        if s_category is not None:
+            little_category = LittleCategory.objects.get(name = s_category)
+        else:
+            little_category = LittleCategory.objects.filter(medium_category = medium_category, is_view = True)[:1][0]
+
+        # カテゴリリスト取得
+        print(l_category)
+        print(m_category)
+        print(s_category)
+        large_category = LargeCategory.objects.get(name = l_category)
+        medium_category_list = MediumCategory.objects.filter(large_category = large_category)
+        little_category_list = LittleCategory.objects.filter(medium_category = medium_category)
+
+        TODATE = datetime.datetime.now()
+        LAST_DATE = datetime.datetime.now()-datetime.timedelta(days=5)
+
+        #item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[u", ".join(lc.name for lc in little_category.tags.all())], active=True).order_by('amino_price', '-updated_at').distinct()
+#        print(little_category.tags.all())
+#        print(u", ".join(lc.name for lc in little_category.tags.all()))
+
+        print('DEBUG DEBUG DEBUG tags: ')
+        print(little_category)
+        tag_list = u", ".join(lc.name for lc in little_category.tags.all())
+        print(tag_list)
+        item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[tag_list], active=True).order_by('amino_price', '-updated_at').distinct()
+        print('DEBUG DEBUG DEBUG item_list : ')
+        print(item_list)
+
+        site = Site.objects.get(pk=1)
+        context = {
+                    'site'                : site,
+                    'large_category'      : large_category,
+                    'medium_category_list': medium_category_list,
+                    'little_category_list': little_category_list,
+                    'medium_category'     : medium_category,
+                    'little_category'     : little_category,
+                    'item'                : item_list,
+                  }
+
+        if extra_context is not None:
+            context.update(extra_context)
+
+        #return render(request, 'apps/index_default.html')
+        return render(request, template, context)
 
 
 @page_template('apps/index_simple_page.html')
@@ -62,7 +136,11 @@ def index_kaisen(request, template='apps/index_simple.html', extra_context=None)
         item_types.append({'value': Item.ItemType.KAISEN_KANI.value, 'label': Item.ItemType.KAISEN_KANI.label, 'url': '/kaisen_kani/', 'is_active': kaisen_kani_active })
         item_types.append({'value': Item.ItemType.KAISEN_EBI.value, 'label': Item.ItemType.KAISEN_EBI.label, 'url': '/kaisen_ebi/', 'is_active': kaisen_ebi_active })
         item_types.append({'value': Item.ItemType.KAISEN_KAKI.value, 'label': Item.ItemType.KAISEN_KAKI.label, 'url': '/kaisen_kaki/', 'is_active': kaisen_kaki_active })
+        item_groups = []
+        item_groups.append({'label': '鮮魚', 'url': '/kaisen_kani/', 'is_active': 'active', 'item_types': item_types})
+        item_groups.append({'label': '精肉', 'url': '/kaisen_kani/', 'is_active': '', 'item_types': []})
         context = {
+                'item_groups': item_groups,
                 'item_types': item_types,
                 'item':      item_list,
                 }
