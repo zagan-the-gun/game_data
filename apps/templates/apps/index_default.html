@@ -1,0 +1,34 @@
+{% extends 'apps/default_base.html' %}
+{% load static %}
+{% block content %}
+
+
+<ul class='nav nav-tabs'>
+  {% for mc in medium_category_list %}
+  <li class='nav-item'>
+    <a href='/stock-news/{{ large_category.name }}/{{ mc.name }}/' class='small nav-link '>
+      {{ mc.label }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+{% for sc in small_category_list %}
+<a href='/stock-news/{{ large_category.name }}/{{ sc.medium_category.name }}/{{ sc.name }}/' class='small p-2' style='display:inline;'>
+  <span class="badge badge-pill badge-primary">{{ sc.label }}</span>
+</a>
+{% endfor %}
+
+{% include page_template %}
+{% block js %}
+    {{ block.super }}
+    <script src='{% static 'apps/el-pagination.js' %}'></script>
+    <script>
+        $.endlessPaginate({
+            paginateOnScroll: true,
+            paginateOnScrollMargin: 20
+        });
+    </script>
+{% endblock %}
+
+{% endblock %}

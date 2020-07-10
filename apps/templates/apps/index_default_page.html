@@ -1,0 +1,61 @@
+{% bootstrap_javascript jquery='full' %}
+{% load static %}
+{% load humanize %}
+{% load el_pagination_tags %}
+
+
+<div class='container'>
+  <div class='row'>
+
+{% if item %} 
+  {% lazy_paginate item %} 
+  {% for m in item %}
+      <div class='col-12' style='padding:10px 0px 10px 0px;'>
+      <div class='media position-relative'>
+          <div class='col-4'>
+            <img class="img-fluid" src='{{ m.image_url }}' />
+          </div>
+          <div class='col-8 pl-0'>
+            <div class='small'>{{ m.title|truncatechars:64 }}</div>
+            <div>
+              <span class='h1 text-danger'>
+                {{ m.amino_price }}
+              </span>
+              <span class='text-danger'>
+                円/100g
+              </span>
+              <span class='small'>
+              {{ m.price|intcomma }}円
+              </span>
+              {% if m.shipping_price == 0 %}
+              <span class='text-danger small font-weight-bold'>
+                送料無料
+              {% elif m.shipping_price > 0 %}
+              <span class='small'>
+                送料 {{ m.shipping_price }} 円
+              {% endif %}
+              </span>
+            </div>
+            <div class='small py-0'>
+              {{ m.updated_at|naturaltime}}
+              {% if m.distributor == 'rakuten' %}
+              <img class='float-right' src={% static 'apps/rakuten_logo2.png' %} height='20' />
+              {% elif m.distributor == 'yahoo' %}
+              <img class='float-right' src={% static 'apps/yahoo_logo2.jpg' %} height='18' />
+              {% elif m.distributor == 'amazon' %}
+              <img class='float-right' src={% static 'apps/amazon_logo.jpg' %} height='32' />
+              {% else %}
+              <span class='float-right'>{{ m.distributor }}</span>
+              {% endif %}
+            </div>
+            <a href='{{ m.site_url }}' class='stretched-link' target='_blank'></a>
+          </div>
+      </div>
+      </div>
+  {% endfor %}
+  {% show_more %}
+{% endif %}
+
+  </div>
+</div>
+
