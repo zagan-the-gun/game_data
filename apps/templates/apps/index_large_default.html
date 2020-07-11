@@ -1,0 +1,27 @@
+{% extends 'apps/default_base.html' %}
+{% block content %}
+{% bootstrap_javascript jquery='full' %}
+
+
+<div class='container'>
+  <div class='row'>
+  {% if  large_category_list %}
+    {% for lc in large_category_list %}
+    <div class='col-6 col-md-2 rounded border-secondary border border-primary p-1'>
+        <a href='/stock-news/{{ lc.name }}/' >
+      <div class='row m-0'>
+        <div class='col-3 p-1'>
+          <img src='/media/{{ lc.image.name }}' height='64' />
+        </div>
+        <div class='col-9 d-flex align-items-center p-1'>
+          {{ lc.label }}
+        </div>
+      </div>
+        </a>
+    </div>
+    {% endfor %}
+  {% endif %}
+  </div>
+</div>
+
+{% endblock %}
