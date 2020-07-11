@@ -18,7 +18,7 @@ def index(request):
         return redirect('kaisen_kani/')
 
     else:
-        return redirect('stock-news//')
+        return redirect('stock-news/')
 
 
 def about(request):
