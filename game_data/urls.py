@@ -32,6 +32,7 @@ urlpatterns = [
     #path('api/', api, name='api'),
     path('about/', about, name='about'),
     path('kaisen_about/', about, name='about'),
+    path('default_about/', about, name='about'),
     path('admin/', admin.site.urls),
     path('stock-news/', index_large_default, name='index_large_default'),
     path('stock-news/<str:l_category>/', index_default, name='index_default'),

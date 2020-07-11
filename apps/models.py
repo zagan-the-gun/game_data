@@ -13,6 +13,12 @@ class Site(models.Model):
              blank=False,
              null=False,
            )
+    site_url=models.URLField(
+                 verbose_name='サイトURL',
+                 max_length=512,
+                 blank=True,
+                 null=True,
+             )
     image = models.ImageField(
               verbose_name='スクエアロゴ',
               upload_to='images/',
