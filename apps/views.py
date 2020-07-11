@@ -31,11 +31,15 @@ def about(request):
           'site': site,
         }
         return render(request, 'apps/kaisen_about.html', d)
+    else:
+        site = Site.objects.get(pk=1)
+        d = {
+          'site': site,
+        }
+        return render(request, 'apps/default_about.html', d)
 
 
 def index_large_default(request):
-    if request.get_host() not in KAISEN:
-        raise Http404
 
     if request.method == 'GET':
 
@@ -46,6 +50,7 @@ def index_large_default(request):
           'large_category_list': large_category_list,
         }
         return render(request, 'apps/index_large_default.html', d)
+
 
 @page_template('apps/index_default_page.html')
 def index_default(request, l_category, m_category=None, s_category=None, template='apps/index_default.html', extra_context=None):
