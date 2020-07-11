@@ -54,9 +54,6 @@ def index_large_default(request):
 
 @page_template('apps/index_default_page.html')
 def index_default(request, l_category, m_category=None, s_category=None, template='apps/index_default.html', extra_context=None):
-    # ドメインチェック
-    if request.get_host() not in KAISEN:
-        raise Http404
 
     if request.method == 'GET':
 
