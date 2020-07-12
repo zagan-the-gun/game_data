@@ -73,8 +73,8 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
         print(m_category)
         print(s_category)
         large_category = LargeCategory.objects.get(name = l_category)
-        medium_category_list = MediumCategory.objects.filter(large_category = large_category)
-        small_category_list = SmallCategory.objects.filter(medium_category = medium_category)
+        medium_category_list = MediumCategory.objects.filter(large_category = large_category, is_view = True)
+        small_category_list = SmallCategory.objects.filter(medium_category = medium_category, is_view = True)
 
         TODATE = datetime.datetime.now()
         LAST_DATE = datetime.datetime.now()-datetime.timedelta(days=5)
