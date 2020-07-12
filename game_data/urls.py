@@ -19,7 +19,8 @@ from apps.views import index_xxx_game, index_xxx_book, api, about, index, index_
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+from django.conf.urls import url
+from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
@@ -38,6 +39,9 @@ urlpatterns = [
     path('stock-news/<str:l_category>/', index_default, name='index_default'),
     path('stock-news/<str:l_category>/<str:m_category>/', index_default, name='index_default'),
     path('stock-news/<str:l_category>/<str:m_category>/<str:s_category>/', index_default, name='index_default'),
+#    path(r'^.*$', index_large_default, name='index_large_default'),
+    url(r'^.*$', RedirectView.as_view(url='stock-news/', permanent=True)),
+#    url(r'^.*$', index_large_default, name='index_large_default'),
 ]
 
 #urlpatterns += staticfiles_urlpatterns()

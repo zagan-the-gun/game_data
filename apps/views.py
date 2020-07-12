@@ -14,8 +14,8 @@ def index(request):
     if request.get_host() in XXX:
         return redirect('xxx_book/')
 
-    elif request.get_host() in KAISEN:
-        return redirect('kaisen_kani/')
+#    elif request.get_host() in KAISEN:
+#        return redirect('kaisen_kani/')
 
     else:
         return redirect('stock-news/')
