@@ -17,7 +17,7 @@ class ItemAdmin(admin.ModelAdmin):
 #    inlines = [PlatformInline]
     list_display = ('pk', 'title', 'amino_price', 'price', 'distributor', 'tag_list', 'created_at', 'updated_at', 'active')
 #    list_filter = ['release_date']
-    search_fields = ['title', 'description_text', 'distributor', 'tags__name']
+    search_fields = ['title', 'description_text', 'distributor', 'tags__name', 'site_url']
 
     actions = ['deactive', 'active']
     def deactive(self, request, queryset):
@@ -51,8 +51,8 @@ class MediumCategoryAdmin(admin.ModelAdmin):
     search_fields = ['name', 'label']
 
 class SmallCategoryAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'medium_category', 'name', 'label', 'tag_list', 'is_view')
-    search_fields = ['name', 'label', 'tags__name']
+    list_display = ['pk', 'medium_category', 'name', 'label', 'tag_list', 'notation_per_unit', 'is_view']
+    search_fields = ['name', 'label', 'tags__name', 'notation_per_unit']
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')
@@ -65,8 +65,8 @@ class SmallCategoryAdmin(admin.ModelAdmin):
 #    search_fields = ['name']
 
 class SearchWordAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'word', 'tag_list')
-    search_fields = ['word', 'tags__name']
+    list_display = ('pk', 'word', 'tag_list', 'notation_unit')
+    search_fields = ['word', 'tags__name', 'notation_unit']
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')

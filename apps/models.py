@@ -126,6 +126,12 @@ class SmallCategory(models.Model):
     tags = TaggableManager(
              blank=True
            )
+    notation_per_unit = models.CharField(
+                          verbose_name='単位あたりの表記',
+                          blank=True,
+                          null=True,
+                          max_length=10,
+                        )
     is_view = models.BooleanField(
                 verbose_name='表示フラグ',
                 default=True,
@@ -146,17 +152,22 @@ class SearchWord(models.Model):
     class Meta:
         verbose_name_plural='検索ワード'
 
-    #検索ワード
-    word=models.CharField(
-           verbose_name='検索ワード',
-           max_length=200,
-           blank=False,
-           null=False,
-         )
+    word = models.CharField(
+             verbose_name='検索ワード',
+             max_length=200,
+             blank=False,
+             null=False,
+           )
     #タグ
     tags = TaggableManager(
              blank=True
            )
+    notation_unit = models.CharField(
+                      verbose_name='表記単位',
+                      blank=True,
+                      null=True,
+                      max_length=10,
+                    )
 
     def __int__(self):
        return str(self.tag)
@@ -173,7 +184,6 @@ class Item(models.Model):
         KAISEN_EBI = 11, 'エビ'
         KAISEN_KAKI = 12, 'カキ'
 
-    #商品タイトル
     title=models.CharField(
               verbose_name='商品タイトル',
               max_length=200,

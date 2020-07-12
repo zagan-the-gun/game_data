@@ -22,10 +22,10 @@
                 {{ m.amino_price }}
               </span>
               <span class='text-danger'>
-                円/100g
+	        円/{{ small_category.notation_per_unit }}
               </span>
               <span class='small'>
-              {{ m.price|intcomma }}円
+                {{ m.price|intcomma }}円
               </span>
               {% if m.shipping_price == 0 %}
               <span class='text-danger small font-weight-bold'>

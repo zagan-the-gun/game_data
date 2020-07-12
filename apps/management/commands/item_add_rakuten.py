@@ -17,9 +17,10 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('DEBUG DEBUG DEBUG item_add: '))
 
         find_list=[]
+        #Todo ここに検索するかどうかの条件入れる
         search_word = SearchWord.objects.all()
         for sw in search_word:
-            find_list.append({'text': sw.word, 'tags': u", ".join(s.name for s in sw.tags.all())})
+            find_list.append({'text': sw.word, 'tags': u", ".join(s.name for s in sw.tags.all()), 'notation_unit': sw.notation_unit})
 
         for fl in find_list:
             fl_url = urllib.parse.quote(fl['text'])
@@ -40,21 +41,48 @@ class Command(BaseCommand):
                 r_amino_price       = r['Item']['itemPrice']
                 print(r_title)
                 print(r_price)
-                # タイトルから重量取得
-                for i in sorted(re.findall(r'([0-9]+)g', r_title), key=int):
-                    # 一番小さい数字を使って割る
-                    if int(i) > 1:
-                        print(i)
-                        r_amino_price=math.ceil(r_price/(int(i)/100))
-                        break
-
-                # 取得できなかったらkgでサーチ
-                if r_amino_price == r_price:
-                    for i in sorted(re.findall(r'([0-9]+\.[0-9]+|[0-9]+)kg', r_title.replace(',', '.')), key=float):
-                        if float(i) > 0:
+                print('単位' + fl['notation_unit'])
+                if fl['notation_unit'] == 'g':
+                    # タイトルから重量取得
+                    for i in sorted(re.findall(r'([0-9]+)g', r_title), key=int):
+                        # 一番小さい数字を使って割る
+                        if int(i) > 1:
                             print(i)
-                            r_amino_price=math.ceil(r_price/((float(i)*1000)/100))
+                            r_amino_price=math.ceil(r_price/(int(i)/100))
                             break
+                    # 取得できなかったらkgでサーチ
+                    if r_amino_price == r_price:
+                        for i in sorted(re.findall(r'([0-9]+\.[0-9]+|[0-9]+)kg', r_title.replace(',', '.')), key=float):
+                            if float(i) > 0:
+                                print(i)
+                                r_amino_price=math.ceil(r_price/((float(i)*1000)/100))
+                                break
+
+                elif fl['notation_unit'] == 'ml':
+                    # mlの前にある数字を全部集める
+                    for i in sorted(re.findall(r'([0-9]+)ml', r_title), key=int):
+                        if int(i) > 1:
+                            r_amino_price=math.ceil(r_price/(int(i)/100))
+                            break
+                    # 業務用はL表示なので合わせる
+                    if r_amino_price == r_price:
+                        for i in sorted(re.findall(r'([0-9]+)L', r_title), key=int):
+                            if int(i) > 1:
+                                r_amino_price=math.ceil(r_price/((float(i)*1000)/100))
+                                break
+
+                elif fl['notation_unit'] == '枚':
+                    # 枚の前にある数字を全部集める
+                    for i in sorted(re.findall(r'([0-9]+)枚', r_title), key=int, reverse=True):
+                        if int(i) > 1:
+                            r_amino_price=math.ceil(r_price/int(i))
+                            break
+                    # デスクリプション
+                    if r_amino_price == r_price:
+                        for i in sorted(re.findall(r'([0-9]+)枚', r_description_text), key=int, reverse=True):
+                            if int(i) > 1:
+                                r_amino_price=math.ceil(r_price/int(i))
+                                break
 
                 # 単価が取得できなければDBに入れない
                 if r_amino_price == r_price:
@@ -69,7 +97,6 @@ class Command(BaseCommand):
                     r_shipping_price=0
 
                 print(fl['tags'])
-                print(type(fl['tags']))
                 Item.objects.update_or_create(site_url=r_site_url, defaults={'title': r_title, 'image_url': r_image_url, 'site_url': r_site_url, 'description_text': r_description_text, 'amino_price': r_amino_price, 'price': r_price, 'distributor': 'rakuten', 'shipping_price': r_shipping_price, })
                 item = Item.objects.get(site_url=r_site_url)
                 item.tags.add(fl['tags'])

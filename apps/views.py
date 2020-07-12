@@ -61,7 +61,7 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
         if m_category is not None:
             medium_category = MediumCategory.objects.get(name = m_category)
         else:
-            medium_category = MediumCategory.objects.filter(is_view = True)[:1][0]
+            medium_category = MediumCategory.objects.filter(large_category__name = l_category, is_view = True)[:1][0]
 
         if s_category is not None:
             small_category = SmallCategory.objects.get(name = s_category)

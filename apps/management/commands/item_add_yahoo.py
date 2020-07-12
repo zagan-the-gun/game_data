@@ -19,7 +19,7 @@ class Command(BaseCommand):
         find_list=[]
         search_word = SearchWord.objects.all()
         for sw in search_word:
-            find_list.append({'text': sw.word, 'tags': u", ".join(s.name for s in sw.tags.all())})
+            find_list.append({'text': sw.word, 'tags': u", ".join(s.name for s in sw.tags.all()), 'notation_unit': sw.notation_unit})
 
         for fl in find_list:
             fl_url = urllib.parse.quote(fl['text'])
@@ -41,20 +41,38 @@ class Command(BaseCommand):
                     y_price            = int(y['price'])
                     y_amino_price       = int(y['price'])
 
-                    # タイトルから重量取得
-                    #for i in sorted(re.findall(r'([0-9]+)g', y_title), key=int, reverse=True):
-                    for i in sorted(re.findall(r'([0-9]+)g', y_title), key=int):
-                        # 一番小さい数字を使って割る
-                        if int(i) > 1:
-                            y_amino_price=math.ceil(y_price/(int(i)/100))
-                            break
+                    if fl['notation_unit'] == 'g':
+                        # タイトルから重量取得
+                        for i in sorted(re.findall(r'([0-9]+)g', y_title), key=int):
+                            # 一番小さい数字を使って割る
+                            if int(i) > 1:
+                                y_amino_price=math.ceil(y_price/(int(i)/100))
+                                break
+                        # 取得できなかったらkgでサーチ
+                        if y_amino_price == y_price:
+                            for i in sorted(re.findall(r'([0-9]+\.[0-9]+|[0-9]+)kg', y_title), key=float):
+                                if float(i) > 0:
+                                    y_amino_price=math.ceil(y_price/((float(i)*1000)/100))
+                                    break
 
-                    # 取得できなかったらkgでサーチ
-                    if y_amino_price == y_price:
-                        #for i in sorted(re.findall(r'([0-9]+.[0-9]+|[0-9]+)kg', y_title), key=float, reverse=True):
-                        for i in sorted(re.findall(r'([0-9]+\.[0-9]+|[0-9]+)kg', y_title), key=float):
-                            if float(i) > 0:
-                                y_amino_price=math.ceil(y_price/((float(i)*1000)/100))
+                    elif fl['notation_unit'] == 'ml':
+                        # mlの前にある数字を全部集める
+                        for i in sorted(re.findall(r'([0-9]+)ml', y_title), key=int):
+                            if int(i) > 1:
+                                y_amino_price=math.ceil(y_price/(int(i)/100))
+                                break
+                        # 業務用はL表示なので合わせる
+                        if y_amino_price != y_price:
+                            for i in sorted(re.findall(r'([0-9]+)L', y_title), key=int):
+                                if int(i) > 1:
+                                    y_amino_price=math.ceil(y_price/((float(i)*1000)/100))
+                                    break
+
+                    elif fl['notation_unit'] == '枚':
+                        # 枚の前にある数字を全部集める
+                        for i in sorted(re.findall(r'([0-9]+)枚', y_title), key=int, reverse=True):
+                            if int(i) > 1:
+                                y_amino_price=math.ceil(y_price/int(i))
                                 break
 
                     # 単価が取得できなければDBに入れない
