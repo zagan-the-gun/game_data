@@ -132,6 +132,12 @@ class SmallCategory(models.Model):
                           null=True,
                           max_length=10,
                         )
+    image = models.ImageField(
+              verbose_name='画像',
+              upload_to='images/',
+              blank=True,
+              null=True,
+            )
     is_view = models.BooleanField(
                 verbose_name='表示フラグ',
                 default=True,
