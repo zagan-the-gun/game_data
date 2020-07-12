@@ -15,7 +15,7 @@
 
 {% for sc in small_category_list %}
 <a href='/stock-news/{{ large_category.name }}/{{ sc.medium_category.name }}/{{ sc.name }}/' class='small p-2' style='display:inline;'>
-  <span class="badge badge-pill badge-primary">{{ sc.label }}</span>
+  <span class="badge badge-pill badge-primary"><img src='/media/{{ sc.image }}' alt='' />{{ sc.label }}</span>
 </a>
 {% endfor %}
 
