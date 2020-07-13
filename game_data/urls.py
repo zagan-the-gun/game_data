@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from apps.views import index_xxx_game, index_xxx_book, api, about, index, index_kaisen, index_default, index_large_default
+from apps.views import about, index, index_default, index_large_default
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -25,14 +25,6 @@ from django.views.generic.base import RedirectView
 
 urlpatterns = [
     path('', index, name='index'),
-    path('xxx_book/', index_xxx_book, name='index_xxx_book'),
-    path('xxx_game/', index_xxx_game, name='index_xxx_game'),
-    path('kaisen_kani/', index_kaisen, name='index_kaisen'),
-    path('kaisen_ebi/', index_kaisen, name='index_kaisen'),
-    path('kaisen_kaki/', index_kaisen, name='index_kaisen'),
-    #path('api/', api, name='api'),
-    path('about/', about, name='about'),
-    path('kaisen_about/', about, name='about'),
     path('default_about/', about, name='about'),
     path('admin/', admin.site.urls),
     path('stock-news/', index_large_default, name='index_large_default'),
