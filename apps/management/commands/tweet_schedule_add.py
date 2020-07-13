@@ -1,9 +1,11 @@
 from django.core.management import BaseCommand
-from ...models import Item, TweetAccount, TweetSchedule
+from ...models import Item, SmallCategory, TweetAccount, TweetSchedule
 
 import datetime
 import pytz
 import tweepy
+
+import textwrap
 
 
 class Command(BaseCommand):
@@ -20,67 +22,40 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('DEBUG DEBUG DEBUG tweet_schedule_add: '))
 #        self.stdout.write(options.__str__())
 
-        TO_DATE = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
+        #pytz.timezone('Asia/Tokyo').localize(datetime.datetime.now())
+        TODATE = pytz.timezone('Asia/Tokyo').localize(datetime.datetime.now())
         LAST_DATE = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))-datetime.timedelta(days=2)
-        TWEET_DATE = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
+        TWEET_DATE = datetime.datetime.now(pytz.timezone('Asia/Tokyo')) + datetime.timedelta(hours=1)
 
         # ツイートアカウント情報げっちゅ
         ta=TweetAccount.objects.get(pk=1)
 
-        # マスクツイート作成
-        item_list_MASK = Item.objects.filter(updated_at__range=(LAST_DATE, TO_DATE), unit_price__range=('30', '1000000'), item_type=Item.ItemType.MASK, active=True).order_by('unit_price', '-updated_at').all()[:1]
+        # スモールカテゴリ基準でグルグル回す
+        for s in SmallCategory.objects.filter(is_view = True):
+            tag_list = u", ".join(t.name for t in s.tags.all())
+            item = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[tag_list], active=True).order_by('amino_price', '-updated_at').all()[:1]
+            FREESHIPPING=''
+            if item[0].shipping_price == 0:
+                FREESHIPPING='送料無料'
 
-        FREESHIPPING=''
-        if item_list_MASK[0].freeshipping:
-            FREESHIPPING='送料無料'
+            text= '{}在庫情報\nhttps://zaikokun.work\n{}\n{:,} 円/{} {:,}円 {}\n{}\n'.format(
+                    s.label,
+                    textwrap.fill(item[0].title, 62, max_lines=1, placeholder='…'),
+                    item[0].amino_price,
+                    s.notation_per_unit,
+                    item[0].price,
+                    FREESHIPPING,
+                    item[0].site_url
+                    )
+#            print(type(TWEET_DATE))
+#            print(TODATE)
+#            print(LAST_DATE)
+#            print(TWEET_DATE)
+#            print(text)
+#            print('')
+#            print('')
 
-        import textwrap
-        text='マスク在庫情報\nhttps://stock.the-menz.com\n{}\n{:,} 円/枚 {:,}円 {}\n{}\n#マスク #入荷 #再入荷 #在庫復活'.format(
-                textwrap.fill(item_list_MASK[0].title, 62, max_lines=1, placeholder='…'),
-                item_list_MASK[0].unit_price,
-                item_list_MASK[0].price,
-                FREESHIPPING,
-                item_list_MASK[0].site_url
-                )
-
-        ts = TweetSchedule(tweet_account=ta, tweet_content=text, tweet_at=TWEET_DATE, tweeted=False)
-        ts.save()
-
-        # アルコールスプレーツイート作成
-        item_list_ALCOHOL_SPRAY = Item.objects.filter(updated_at__range=(LAST_DATE, TO_DATE), unit_price__range=('0', '1000000'), item_type=Item.ItemType.ALCOHOL_SPRAY, active=True).order_by('unit_price', '-updated_at')
-
-        FREESHIPPING=''
-        if item_list_ALCOHOL_SPRAY[0].freeshipping:
-            FREESHIPPING='送料無料'
-
-        import textwrap
-        text='アルコールスプレー在庫情報\nhttps://stock.the-menz.com/alcohol_spray/\n{}\n{:,} 円/1ml {:,}円 {}\n{}\n#アルコールスプレー #消毒 #除菌 #入荷 #再入荷 #在庫復活'.format(
-                textwrap.fill(item_list_ALCOHOL_SPRAY[0].title, 62, max_lines=1, placeholder='…'),
-                item_list_ALCOHOL_SPRAY[0].unit_price,
-                item_list_ALCOHOL_SPRAY[0].price,
-                FREESHIPPING,
-                item_list_ALCOHOL_SPRAY[0].site_url
-                )
-
-        ts = TweetSchedule(tweet_account=ta, tweet_content=text, tweet_at=TWEET_DATE, tweeted=False)
-        ts.save()
-
-        # アルコールジェルツイート作成
-        item_list_ALCOHOL_GEL = Item.objects.filter(updated_at__range=(LAST_DATE, TO_DATE), unit_price__range=('0', '1000000'), item_type=Item.ItemType.ALCOHOL_GEL, active=True).order_by('unit_price', '-updated_at')
-
-        FREESHIPPING=''
-        if item_list_ALCOHOL_GEL[0].freeshipping:
-            FREESHIPPING='送料無料'
-
-        import textwrap
-        text='アルコールジェル在庫情報\nhttps://stock.the-menz.com/alcohol_gel/\n{}\n{:,} 円/1ml {:,}円 {}\n{}\n#アルコールジェル #消毒 #除菌 #入荷 #再入荷 #在庫復活'.format(
-                textwrap.fill(item_list_ALCOHOL_GEL[0].title, 62, max_lines=1, placeholder='…'),
-                item_list_ALCOHOL_GEL[0].unit_price,
-                item_list_ALCOHOL_GEL[0].price,
-                FREESHIPPING,
-                item_list_ALCOHOL_GEL[0].site_url
-                )
-
-        ts = TweetSchedule(tweet_account=ta, tweet_content=text, tweet_at=TWEET_DATE, tweeted=False)
-        ts.save()
+            ts = TweetSchedule(tweet_account=ta, tweet_content=text, tweet_at=TWEET_DATE, tweeted=False)
+            ts.save()
+            TWEET_DATE = TWEET_DATE + datetime.timedelta(minutes=1)
 
