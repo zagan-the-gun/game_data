@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 api = tweepy.API(auth)
                 api.update_status(status=t.tweet_content)
                 t.tweeted=True
-#                t.save()
+                t.save()
             except Exception as e:
                 print(e)
                 continue
