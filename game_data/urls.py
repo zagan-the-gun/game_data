@@ -39,11 +39,10 @@ urlpatterns = [
     path('stock-news/<str:l_category>/', index_default, name='index_default'),
     path('stock-news/<str:l_category>/<str:m_category>/', index_default, name='index_default'),
     path('stock-news/<str:l_category>/<str:m_category>/<str:s_category>/', index_default, name='index_default'),
-#    path(r'^.*$', index_large_default, name='index_large_default'),
-    url(r'^.*$', RedirectView.as_view(url='/', permanent=True)),
-#    url(r'^.*$', index_large_default, name='index_large_default'),
+#    url(r'^.*$', RedirectView.as_view(url='/', permanent=True)),
 ]
 
 #urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#urlpatterns += url(r'^.*$', RedirectView.as_view(url='/', permanent=True))
 
