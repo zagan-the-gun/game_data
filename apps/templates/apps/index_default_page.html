@@ -16,12 +16,12 @@
             <img class="img-fluid" src='{{ m.image_url }}' />
           </div>
           <div class='col-8 pl-0'>
-            <div class='small'>{{ m.title|truncatechars:64 }}</div>
+            <div class='small'>{{ m.title|truncatechars:36 }}</div>
             <div>
-              <span class='h1 text-danger'>
+              <span class='h2 text-danger'>
                 {{ m.amino_price }}
               </span>
-              <span class='text-danger'>
+              <span class='small text-danger'>
 	        円/{{ small_category.notation_per_unit }}
               </span>
               <span class='small'>
