@@ -1,14 +1,21 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Item, LargeCategory, MediumCategory, SmallCategory, Site
 import datetime
 import pytz
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from el_pagination.decorators import page_template
-from django.http import Http404
+#from django.http import Http404
+
 
 XXX    = ['xxx.stock-news.work', 'stg-xxx.stock-news.work']
 KAISEN = ['kaisen.stock-news.work', 'stg-kaisen.stock-news.work']
+
+def redirect(request, item_id=None):
+    item = get_object_or_404(Item, pk = item_id, active = True)
+
+    return HttpResponseRedirect(item.site_url)
+
 
 def index(request):
     return redirect('stock-news/')
