@@ -8,17 +8,15 @@ from el_pagination.decorators import page_template
 #from django.http import Http404
 
 
-XXX    = ['xxx.stock-news.work', 'stg-xxx.stock-news.work']
-KAISEN = ['kaisen.stock-news.work', 'stg-kaisen.stock-news.work']
 
-def redirect(request, item_id=None):
+def item_redirect(request, item_id=None):
     item = get_object_or_404(Item, pk = item_id, active = True)
 
     return HttpResponseRedirect(item.site_url)
 
 
 def index(request):
-    return redirect('stock-news/')
+    return redirect('/stock-news/')
 
 
 def about(request):
