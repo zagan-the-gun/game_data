@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from apps.views import about, index, index_default, index_large_default, redirect
+from apps.views import about, index, index_default, index_large_default, item_redirect
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -31,7 +31,12 @@ urlpatterns = [
     path('stock-news/<str:l_category>/', index_default, name='index_default'),
     path('stock-news/<str:l_category>/<str:m_category>/', index_default, name='index_default'),
     path('stock-news/<str:l_category>/<str:m_category>/<str:s_category>/', index_default, name='index_default'),
-    path('product/<int:item_id>', redirect, name='redirect'),
+    path('product/<int:item_id>', item_redirect, name='item_redirect'),
+    #いずれ消す
+    path('alcohol_spray/', index, name='index'),
+    path('alcohol_gel/', index, name='index'),
+    path('thermometer/', index, name='index'),
+    path('about/', index, name='index'),
 #    url(r'^.*$', RedirectView.as_view(url='/', permanent=True)),
 ]
 
