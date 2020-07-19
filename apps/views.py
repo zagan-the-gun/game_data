@@ -11,8 +11,15 @@ from el_pagination.decorators import page_template
 
 def item_redirect(request, item_id=None):
     item = get_object_or_404(Item, pk = item_id, active = True)
-
-    return HttpResponseRedirect(item.site_url)
+    tag_list = u", ".join(i.name for i in item.tags.all())
+    small_category = SmallCategory.objects.filter(tags__name__in=[tag_list], is_view = True)[:1][0]
+    site = Site.objects.get(pk=1)
+    d = {
+      'site'          : site,
+      'item'          : item,
+      'small_category': small_category,
+    }
+    return render(request, 'apps/redirect.html', d)
 
 
 def index(request):
@@ -84,9 +91,9 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
                     'site'                : site,
                     'large_category'      : large_category,
                     'medium_category_list': medium_category_list,
-                    'small_category_list': small_category_list,
+                    'small_category_list' : small_category_list,
                     'medium_category'     : medium_category,
-                    'small_category'     : small_category,
+                    'small_category'      : small_category,
                     'item'                : item_list,
                   }
 
