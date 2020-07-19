@@ -4,6 +4,29 @@
 {% load el_pagination_tags %}
 
 
+<style>
+  #radius {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    opacity: 0.7;
+    border: 1px solid gray;
+    border-radius: 50%;
+  }
+  #icon {
+    position: absolute;
+    top: 3px;
+    right: 14px;
+    width: 5px;
+    height: 5px;
+  }
+  .dropdown-toggle:after {
+	  content: none
+  }
+
+</style>
+
 <div class='container'>
   <div class='row'>
 
@@ -11,8 +34,23 @@
   {% lazy_paginate item %} 
   {% for m in item %}
       <div class='col-12' style='padding:10px 0px 10px 0px;'>
-      <div class='media position-relative'>
-          <div class='col-4'>
+        <div class='media position-relative'>
+          <div class='col-4' style='position: relative;'>
+<div class="dropdown" style='position: absolute;'>
+<!--  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+  <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-expanded="false">
+    <div id='radius'>
+      <i class='fas fa-external-link-alt' id='icon'></i>
+    </div>
+  </a>
+  <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+    <a class='dropdown-item' href='https://twitter.com/share?url={{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}&text={{ m.title }}' target='_blank' rel="nofollow">Twitter</a>
+    <a class='dropdown-item' href='https://timeline.line.me/social-plugin/share?url={{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}' target='_blank'>LINE</a>
+    <a class='dropdown-item' href='https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}' target='_blank' rel='nofollow'>Facebook</a>
+    <a class='dropdown-item' href='https://b.hatena.ne.jp/entry/{{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}' target="_blank" rel="nofollow">はてなブックマーク</a>
+    <a class='dropdown-item' href='https://getpocket.com/edit?url={{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}' target="_blank" rel="nofollow">Pocket</a>
+  </div>
+</div>
             <img class="img-fluid" src='{{ m.image_url }}' />
           </div>
           <div class='col-8 pl-0'>
