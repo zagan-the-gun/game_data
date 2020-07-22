@@ -9,9 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta property="og:type" content='website'/>
     <meta property="og:url" content='{{ item.site_url }}'/>
-    <meta property="og:title" content='{{ site.name }}'/>
+    <meta property="og:title" content='{{ small_category.label }}在庫情報'/>
     <meta property="og:description" content='{{ small_category.label }}在庫情報 {{ item.amino_price }}円/{{ small_category.notation_per_unit }} {{ item.price }}円<br>{{ item.title }}'/>
-    <meta property="og:site_name" content='{{ site.name }}'/>
+    <meta property="og:site_name" content='{{ small_category.label }}在庫情報'/>
     <meta property="og:image" content='{{ item.image_url }}' />
     <meta name='twitter:site' content='@stockman111'/>
     <meta name='twitter:image' content='{{ item.image_url }}' />
@@ -28,10 +28,11 @@
       gtag('js', new Date());
       gtag('config', 'UA-35923180-6');
     </script>
-    <meta http-equiv='refresh' content="1;URL='{{ item.site_url }}'" />
+    <meta http-equiv='refresh' content="3;URL='{{ item.site_url }}'" />
   </head>
 
   <body>
+    {{ small_category.label }}在庫情報 {{ item.amino_price }}円/{{ small_category.notation_per_unit }} {{ item.price }}円<br>{{ item.title }}<br>
     <a href='{{ item.site_url }}'>転送されない場合はここをクリック</a>
   </body>
 </html>
