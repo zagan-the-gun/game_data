@@ -38,15 +38,16 @@ class Command(BaseCommand):
             if item[0].shipping_price == 0:
                 FREESHIPPING='送料無料'
 
-            text= '{}在庫情報\nhttps://zaikokun.work\n{}\n{:,} 円/{} {:,}円 {}\n{}\n'.format(
-                    s.label,
-                    textwrap.fill(item[0].title, 62, max_lines=1, placeholder='…'),
-                    item[0].amino_price,
-                    s.notation_per_unit,
-                    item[0].price,
-                    FREESHIPPING,
-                    item[0].site_url
-                    )
+            URL = 'https://zaikokun.work/stock-news/' + s.medium_category.large_category.name + '/' + s.medium_category.name + '/' + s.name + '/'
+            text = '{}在庫情報【安値更新】\n{:,} 円/{} {} {:,}円\n{}\n{}'.format(
+                     s.label,
+                     item[0].amino_price,
+                     s.notation_per_unit,
+                     FREESHIPPING,
+                     item[0].price,
+                     URL,
+                     textwrap.fill(item[0].title, 62, max_lines=1, placeholder='…'),
+                   )
 #            print(type(TWEET_DATE))
 #            print(TODATE)
 #            print(LAST_DATE)
@@ -55,7 +56,8 @@ class Command(BaseCommand):
 #            print('')
 #            print('')
 
-            ts = TweetSchedule(tweet_account=ta, tweet_content=text, tweet_at=TWEET_DATE, tweeted=False)
-            ts.save()
+            TweetSchedule.objects.get_or_create(tweet_account=ta, tweet_content=text, defaults={'tweet_account': ta, 'tweet_content': text, 'tweet_at': TWEET_DATE, 'tweeted': False, })
+            #ts = TweetSchedule(tweet_account=ta, tweet_content=text, tweet_at=TWEET_DATE, tweeted=False)
+            #ts.save()
             TWEET_DATE = TWEET_DATE + datetime.timedelta(minutes=1)
 
