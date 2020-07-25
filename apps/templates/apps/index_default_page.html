@@ -63,6 +63,7 @@
   }
 </style>
 
+<!-- 上に戻るボタン -->
 <script>
   jQuery(function() {
     var appear = false;
@@ -92,6 +93,23 @@
 </script>
 <div id="page_top"><a href="#"></a></div>
 
+<script>
+	function share(id) {
+		//web share apiをサポートしているか否か
+		if (navigator.share) {
+			navigator.share({
+				title: document.getElementById('share' + id).getAttribute('title'),
+				text: document.getElementById('share' + id).getAttribute('text'),
+				url: document.getElementById('share' + id).getAttribute('url'),
+			});
+		}
+		//サポートしていない場合の処理
+		else {
+			alert('このブラウザはシェア機能に対応していません。');
+		}
+	}
+</script>
+
 <div class='container'>
   <div class='row'>
 
@@ -101,6 +119,7 @@
       <div class='col-12' style='padding:10px 0px 10px 0px;'>
         <div class='media position-relative'>
           <div class='col-4' style='position: relative;'>
+          <!-- シェアのドロップダウン機能 -->
 <div class="dropdown" style='position: absolute;'>
 <!--  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
   <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-expanded="false">
@@ -109,6 +128,7 @@
     </div>
   </a>
   <div class='dropdown-menu' aria-labelledby='dropdownMenuLink'>
+    <a class='dropdown-item' id='share{{ m.pk }}' onclick='share({{ m.pk }})' title='在庫くん' text='{{ m.amino_price }}円/{{ small_category.notation_per_unit }} 送料 {{ m.shipping_price }} 円 {{ m.title|truncatechars:36 }}' url='/product/{{ m.pk }}'>アプリでシェア</a>
     <a class='dropdown-item' href='https://twitter.com/share?url={{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}&text={{ m.title }}' target='_blank' rel="nofollow">Twitter</a>
     <a class='dropdown-item' href='https://timeline.line.me/social-plugin/share?url={{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}' target='_blank'>LINE</a>
     <a class='dropdown-item' href='https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}/product/{{ m.pk }}' target='_blank' rel='nofollow'>Facebook</a>
