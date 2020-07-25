@@ -8,16 +8,40 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta property="og:type" content='website'/>
-    <meta property="og:url" content='{{ site.site_url }}'/>
+    <!-- <meta property="og:url" content='{{ site.site_url }}'/> -->
+    <meta property="og:url" content='{{ site.site_url }}stock-news/{{ large_category.name }}/{{ medium_category.name }}/{{ small_category.name }}/'/>
     <meta property="og:title" content='{{ site.name }}'/>
+
+    {% if item %}
+    <meta property="og:description" content='{{ item.0.description_text }}'/>
+    {% else %}
     <meta property="og:description" content='100g辺りの金額でコスパ比較！簡単お得な通販のフライヤーサイト！売価はリアルタイムで更新しているから常に鮮度は抜群！'/>
+    {% endif %}
+
     <meta property="og:site_name" content='{{ site.name }}'/>
-    <meta property="og:image" content='{% static "apps/tatemono_hospital2_764_400.png" %}' />
+
+    {% if item %}
+    <meta property='og:image' content='{{ item.0.image_url }}' />
+    {% else %}
+    <meta property='og:image' content='{% static "apps/tatemono_hospital2_764_400.png" %}' /> -->
+    {% endif %}
+
     <meta name='twitter:site' content='@stockman111'/>
+
+    {% if item %}
+    <meta name='twitter:image' content='{{ item.0.image_url }}' />
+    {% else %}
     <meta name='twitter:image' content='{% static "apps/tatemono_hospital2_764_400.png" %}' />
+    {% endif %}
+
     <meta name='twitter:card' content='summary_large_image'/>
     <meta name="keywords" content='通販 価格比較'/>
+
+    {% if item %}
+    <meta name="description" content='{{ item.0.description_text }}'/>
+    {% else %}
     <meta name="description" content='100g辺りの金額でコスパ比較！簡単お得な通販のフライヤーサイト！売価はリアルタイムで更新しているから常に鮮度は抜群！'/>
+    {% endif %}
 
     <link rel="apple-touch-icon" sizes="180x180" href='{% static "apps/apple-touch-icon.png" %}'>
     <link rel="icon" type="image/png" sizes="32x32" href='{% static "apps/favicon-32x32.png" %}'>
