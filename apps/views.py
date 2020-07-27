@@ -64,9 +64,9 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
             small_category = SmallCategory.objects.filter(medium_category = medium_category, is_view = True)[:1][0]
 
         # カテゴリリスト取得
-        print(l_category)
-        print(m_category)
-        print(s_category)
+#        print(l_category)
+#        print(m_category)
+#        print(s_category)
         large_category = LargeCategory.objects.get(name = l_category)
         medium_category_list = MediumCategory.objects.filter(large_category = large_category, is_view = True)
         small_category_list = SmallCategory.objects.filter(medium_category = medium_category, is_view = True)
@@ -74,17 +74,16 @@ def index_default(request, l_category, m_category=None, s_category=None, templat
         TODATE = datetime.datetime.now()
         LAST_DATE = datetime.datetime.now()-datetime.timedelta(days=5)
 
-        #item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[u", ".join(lc.name for lc in small_category.tags.all())], active=True).order_by('amino_price', '-updated_at').distinct()
 #        print(small_category.tags.all())
 #        print(u", ".join(lc.name for lc in small_category.tags.all()))
 
-        print('DEBUG DEBUG DEBUG tags: ')
-        print(small_category)
+#        print('DEBUG DEBUG DEBUG tags: ')
+#        print(small_category)
         tag_list = u", ".join(lc.name for lc in small_category.tags.all())
-        print(tag_list)
+#        print(tag_list)
         item_list = Item.objects.filter(updated_at__range=(LAST_DATE, TODATE), amino_price__range=('0', '1000000'), tags__name__in=[tag_list], active=True).order_by('amino_price', '-updated_at').distinct()
-        print('DEBUG DEBUG DEBUG item_list : ')
-        print(item_list)
+#        print('DEBUG DEBUG DEBUG item_list : ')
+#        print(item_list)
 
         site = Site.objects.get(pk=1)
         context = {
