@@ -123,6 +123,12 @@ class SmallCategory(models.Model):
               blank=False,
               null=False,
             )
+    hashtag = models.CharField(
+              verbose_name='ハッシュタグ',
+              max_length=20,
+              blank=True,
+              null=True,
+            )
     tags = TaggableManager(
              blank=True
            )

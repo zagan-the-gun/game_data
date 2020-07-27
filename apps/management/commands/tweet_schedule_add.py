@@ -39,7 +39,7 @@ class Command(BaseCommand):
                 FREESHIPPING='送料無料'
 
             URL = 'https://zaikokun.work/stock-news/' + s.medium_category.large_category.name + '/' + s.medium_category.name + '/' + s.name + '/'
-            text = '{}在庫情報【安値更新】\n{:,} 円/{} {} {:,}円\n{}\n{}'.format(
+            text = '{}在庫情報【安値更新】\n{:,} 円/{} {} {:,}円\n{}\n{}\n{}'.format(
                      s.label,
                      item[0].amino_price,
                      s.notation_per_unit,
@@ -47,6 +47,7 @@ class Command(BaseCommand):
                      item[0].price,
                      URL,
                      textwrap.fill(item[0].title, 62, max_lines=1, placeholder='…'),
+                     s.hashtag,
                    )
 #            print(type(TWEET_DATE))
 #            print(TODATE)

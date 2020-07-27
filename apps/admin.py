@@ -51,8 +51,8 @@ class MediumCategoryAdmin(admin.ModelAdmin):
     search_fields = ['name', 'label']
 
 class SmallCategoryAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'medium_category', 'name', 'label', 'tag_list', 'notation_per_unit', 'is_view']
-    search_fields = ['name', 'label', 'tags__name', 'notation_per_unit']
+    list_display = ['pk', 'medium_category', 'name', 'label', 'hashtag', 'tag_list', 'notation_per_unit', 'is_view']
+    search_fields = ['name', 'label', 'hashtag', 'tags__name', 'notation_per_unit']
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')
