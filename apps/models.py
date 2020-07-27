@@ -180,6 +180,12 @@ class SearchWord(models.Model):
                       null=True,
                       max_length=10,
                     )
+    exclusion_word = models.CharField(
+                       verbose_name='除外ワード',
+                       max_length=20,
+                       blank=True,
+                       null=True,
+                     )
 
     def __int__(self):
        return str(self.tag)

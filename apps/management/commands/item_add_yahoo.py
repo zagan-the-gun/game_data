@@ -19,7 +19,7 @@ class Command(BaseCommand):
         find_list=[]
         search_word = SearchWord.objects.all()
         for sw in search_word:
-            find_list.append({'text': sw.word, 'tags': u", ".join(s.name for s in sw.tags.all()), 'notation_unit': sw.notation_unit})
+            find_list.append({'text': sw.word, 'tags': u", ".join(s.name for s in sw.tags.all()), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
 
         for fl in find_list:
             fl_url = urllib.parse.quote(fl['text'])
@@ -29,9 +29,22 @@ class Command(BaseCommand):
             yahoo_url = 'https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=dj00aiZpPTh6NTZSUTFKcGlWSiZzPWNvbnN1bWVyc2VjcmV0Jng9NGU-&affiliate_type=vc&affiliate_id=http%3A%2F%2Fck.jp.ap.valuecommerce.com%2Fservlet%2Freferral%3Fsid%3D3519741%26pid%3D886480311%26vc_url%3D&in_stock=true&results=50&query=' + fl_url
             yahoo_json = json.loads(requests.get(yahoo_url).text)
  
-            #for y in yahoo_json['ResultSet']['0']['Result'].items():
-            #for y in yahoo_json['ResultSet']['0']['Result'].values():
             for y in yahoo_json['hits']:
+                # 除外ワードのスキップ処理
+                exclusion_word = fl['exclusion_word'] or ''
+                for ew in exclusion_word.split(' '):
+                    if (ew or 'asdf') in y['name']:
+                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
+                        print(ew)
+                        print(y['name'])
+                        continue
+                for ew in exclusion_word.split(' '):
+                    if ( ew or 'asdf') in y['description']:
+                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
+                        print(ew)
+                        print(y['description'])
+                        continue
+
                 #新方式になってこのifは不要
                 if (y not in ['Request', 'Modules', '_container', 'Hit', '']) and ('Query' not in y):
                     y_title            = y['name']
