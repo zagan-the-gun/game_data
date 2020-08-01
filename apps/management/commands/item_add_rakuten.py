@@ -20,11 +20,11 @@ class Command(BaseCommand):
         #Todo ここに検索するかどうかの条件入れる
         search_word = SearchWord.objects.all()
         for sw in search_word:
-            find_list.append({'text': sw.word, 'tags': u", ".join(s.name for s in sw.tags.all()), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
+            find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
 
         for fl in find_list:
             fl_url = urllib.parse.quote(fl['text'])
-            print('タグ: {} 検索文字列: {}'.format(fl['tags'], fl['text']))
+            print('タグ: {} 検索文字列: {}'.format(u", ".join(s.name for s in fl['tags']), fl['text']))
 
             # 楽天からJSONで商品情報取得
             rakuten_url = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?format=json&keyword=' + fl_url + '&affiliateId=1b221d9c.03487084.1b221d9d.56b5e1b5&applicationId=1040781665970884363'
@@ -113,5 +113,6 @@ class Command(BaseCommand):
 #                print(fl['tags'])
                 Item.objects.update_or_create(site_url=r_site_url, defaults={'title': r_title, 'image_url': r_image_url, 'site_url': r_site_url, 'description_text': r_description_text, 'amino_price': r_amino_price, 'price': r_price, 'distributor': 'rakuten', 'shipping_price': r_shipping_price, })
                 item = Item.objects.get(site_url=r_site_url)
-                item.tags.add(fl['tags'])
+                for tag in fl['tags']:
+                    item.tags.add(tag)
 
