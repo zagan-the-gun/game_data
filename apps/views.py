@@ -11,8 +11,10 @@ from el_pagination.decorators import page_template
 
 def item_redirect(request, item_id=None):
     item = get_object_or_404(Item, pk = item_id, active = True)
-    tag_list = u", ".join(i.name for i in item.tags.all())
-    small_category = SmallCategory.objects.filter(tags__name__in=[tag_list], is_view = True)[:1][0]
+    tag_list=[]
+    for tag in item.tags.all():
+        tag_list.append(tag)
+    small_category = SmallCategory.objects.filter(tags__name__in=tag_list, is_view = True)[:1][0]
     site = Site.objects.get(pk=1)
     d = {
       'site'          : site,
