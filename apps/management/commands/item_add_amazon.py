@@ -1,31 +1,16 @@
 from django.core.management import BaseCommand
 from ...models import Item, SearchWord, ItemType
 
-import json
-import requests
 import re
 
 import math
 
 import urllib.parse
 
-from bs4 import BeautifulSoup
-from requests_html import HTMLSession
-from fake_useragent import UserAgent
-#import time
-
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-#from bs4 import BeautifulSoup as bs
-import re
-import time
-
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
-from time import sleep
 import datetime
-import re
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 
