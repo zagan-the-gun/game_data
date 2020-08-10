@@ -177,7 +177,7 @@ class Command(BaseCommand):
                 print('amazon_shipping_price: ' + str(a_shipping_price))
                 print('')
 
-                Item.objects.update_or_create(site_url=a_site_url, defaults={'title': a_title, 'image_url': a_image_url, 'site_url': a_site_url, 'amino_price': a_amino_price, 'price': a_price, 'distributor': 'amazon', 'shipping_price': a_shipping_price, })
+                Item.objects.update_or_create(site_url=a_site_url, defaults={'title': a_title[:200], 'image_url': a_image_url, 'site_url': a_site_url, 'amino_price': a_amino_price, 'price': a_price, 'distributor': 'amazon', 'shipping_price': a_shipping_price, })
                 item = Item.objects.get(site_url=a_site_url)
                 for tag in fl['tags']:
                     item.tags.add(tag)
