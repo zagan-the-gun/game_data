@@ -160,6 +160,12 @@ class ItemType(models.IntegerChoices):
     KAISEN_EBI = 11, 'エビ'
     KAISEN_KAKI = 12, 'カキ'
 
+class Distributor(models.IntegerChoices):
+    all     = 1, '全て'
+    rakuten = 2, '楽天'
+    yahoo   = 3, 'ヤフー '
+    amazon  = 4, 'アマゾン'
+
 class SearchWord(models.Model):
     class Meta:
         verbose_name_plural='検索ワード'
@@ -186,6 +192,10 @@ class SearchWord(models.Model):
                        blank=True,
                        null=True,
                      )
+    distributor = models.PositiveIntegerField(
+                    verbose_name='販売元',
+                    choices=Distributor.choices,
+                  )
 
     def __int__(self):
        return str(self.tag)

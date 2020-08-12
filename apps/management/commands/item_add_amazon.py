@@ -44,7 +44,9 @@ class Command(BaseCommand):
         #Todo ここに検索するかどうかの条件入れる
         search_word = SearchWord.objects.all()
         for sw in search_word:
-            find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
+            # 検索対象判別
+            if (sw.distributor == 1) or (sw.distributor == 4):
+                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
 
         #for fl in find_list[0]:
         for fl in find_list:

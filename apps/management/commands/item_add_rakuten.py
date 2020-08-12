@@ -17,12 +17,14 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('DEBUG DEBUG DEBUG item_add: '))
 
         find_list=[]
-        #Todo ここに検索するかどうかの条件入れる
         search_word = SearchWord.objects.all()
         for sw in search_word:
-            find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
+            # 検索対象判別
+            if (sw.distributor == 1) or (sw.distributor == 2):
+                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
 
         for fl in find_list:
+
             fl_url = urllib.parse.quote(fl['text'])
             print('タグ: {} 検索文字列: {}'.format(u", ".join(s.name for s in fl['tags']), fl['text']))
 
