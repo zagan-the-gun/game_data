@@ -196,6 +196,12 @@ class SearchWord(models.Model):
                     verbose_name='販売元',
                     choices=Distributor.choices,
                   )
+    url_param = models.CharField(
+                  verbose_name='URLパラメータ',
+                  max_length=200,
+                  blank=True,
+                  null=False,
+                )
 
     def __int__(self):
        return str(self.tag)

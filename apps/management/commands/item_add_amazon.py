@@ -46,7 +46,7 @@ class Command(BaseCommand):
         for sw in search_word:
             # 検索対象判別
             if (sw.distributor == 1) or (sw.distributor == 4):
-                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
+                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word, 'url_param': sw.url_param})
 
         #for fl in find_list[0]:
         for fl in find_list:
@@ -59,7 +59,7 @@ class Command(BaseCommand):
             print('open browser:{}s'.format(datetime.datetime.now().timestamp() - START))
             # Amazonから商品情報取得
             try:
-                driver.get('https://www.amazon.co.jp/s?k=' + fl_url + '&ref=nb_sb_noss')
+                driver.get('https://www.amazon.co.jp/s?k=' + fl_url + '&ref=nb_sb_noss' + fl['url_param'])
             except Exception as e:
                 print('DEBUG DEBUG DEBUG driver.get() skip')
                 driver.close()

@@ -66,7 +66,7 @@ class SmallCategoryAdmin(admin.ModelAdmin):
 
 class SearchWordAdmin(admin.ModelAdmin):
     list_display = ['pk', 'word', 'tag_list', 'notation_unit', 'exclusion_word', 'distributor']
-    search_fields = ['word', 'tags__name', 'notation_unit', 'exclusion_word', 'distributor']
+    search_fields = ['word', 'tags__name', 'notation_unit', 'exclusion_word', 'distributor', 'url_param']
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')

@@ -21,7 +21,7 @@ class Command(BaseCommand):
         for sw in search_word:
             # 検索対象判別
             if (sw.distributor == 1) or (sw.distributor == 2):
-                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
+                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word, 'url_param': sw.url_param})
 
         for fl in find_list:
 
@@ -29,7 +29,7 @@ class Command(BaseCommand):
             print('タグ: {} 検索文字列: {}'.format(u", ".join(s.name for s in fl['tags']), fl['text']))
 
             # 楽天からJSONで商品情報取得
-            rakuten_url = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?format=json&keyword=' + fl_url + '&affiliateId=1b221d9c.03487084.1b221d9d.56b5e1b5&applicationId=1040781665970884363'
+            rakuten_url = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?format=json&keyword=' + fl_url + '&affiliateId=1b221d9c.03487084.1b221d9d.56b5e1b5&applicationId=1040781665970884363' + fl['url_param']
             rakuten_json = json.loads(requests.get(rakuten_url).text)
 
             for r in rakuten_json['Items']:

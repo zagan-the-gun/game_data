@@ -21,14 +21,14 @@ class Command(BaseCommand):
         for sw in search_word:
             # 検索対象判別
             if (sw.distributor == 1) or (sw.distributor == 3):
-                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word})
+                find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word, 'url_param': sw.url_param})
 
         for fl in find_list:
             fl_url = urllib.parse.quote(fl['text'])
             print('タグ: {} 検索文字列: {}'.format(u", ".join(s.name for s in fl['tags']), fl['text']))
 
             # Yahoo!からJSONで商品情報取得
-            yahoo_url = 'https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=dj00aiZpPTh6NTZSUTFKcGlWSiZzPWNvbnN1bWVyc2VjcmV0Jng9NGU-&affiliate_type=vc&affiliate_id=http%3A%2F%2Fck.jp.ap.valuecommerce.com%2Fservlet%2Freferral%3Fsid%3D3519741%26pid%3D886480311%26vc_url%3D&in_stock=true&results=50&query=' + fl_url
+            yahoo_url = 'https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=dj00aiZpPTh6NTZSUTFKcGlWSiZzPWNvbnN1bWVyc2VjcmV0Jng9NGU-&affiliate_type=vc&affiliate_id=http%3A%2F%2Fck.jp.ap.valuecommerce.com%2Fservlet%2Freferral%3Fsid%3D3519741%26pid%3D886480311%26vc_url%3D&in_stock=true&results=50&query=' + fl_url + fl['url_param']
             yahoo_json = json.loads(requests.get(yahoo_url).text)
  
             for y in yahoo_json['hits']:
