@@ -18,13 +18,12 @@ class Command(BaseCommand):
 
         find_list=[]
         search_word = SearchWord.objects.all()
-        for sw in search_word:
+        for sw in reversed(search_word):
             # 検索対象判別
             if (sw.distributor == 1) or (sw.distributor == 2):
                 find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word, 'url_param': sw.url_param})
 
         for fl in find_list:
-
             fl_url = urllib.parse.quote(fl['text'])
             print('タグ: {} 検索文字列: {}'.format(u", ".join(s.name for s in fl['tags']), fl['text']))
 
@@ -35,18 +34,22 @@ class Command(BaseCommand):
             for r in rakuten_json['Items']:
                 # 除外ワードのスキップ処理
                 exclusion_word = fl['exclusion_word'] or ''
+                exclusion = False
                 for ew in exclusion_word.split(' '):
                     if (ew or 'asdf') in r['Item']['itemName']:
                         print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
                         print(ew)
                         print(r['Item']['itemName'])
-                        continue
+                        exclusion = True
                 for ew in exclusion_word.split(' '):
                     if ( ew or 'asdf') in r['Item']['itemCaption']:
                         print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
                         print(ew)
                         print(r['Item']['itemCaption'])
-                        continue
+                        exclusion = True
+                if exclusion == True:
+                    exclusion = False
+                    continue
 
                 r_title            = r['Item']['itemName']
                 r_image_url        = r['Item']['mediumImageUrls'][0]['imageUrl']
@@ -100,12 +103,25 @@ class Command(BaseCommand):
                                 r_amino_price=math.ceil(r_price/int(i))
                                 break
 
-                # 単価が取得できなければDBに入れない
-                if r_amino_price == r_price:
+                elif fl['notation_unit'] == 'GB':
+                    # タイトルから重量取得
+                    for i in sorted(re.findall(r'([0-9]+)GB', r_title), key=int):
+                        # 一番小さい数字を使って割る
+                        if int(i) > 1:
+#                            print(i)
+                            r_amino_price=math.ceil(r_price/int(i))
+                            break
+                    # 取得できなかったらTBでサーチ
+                    if r_amino_price == r_price:
+                        for i in sorted(re.findall(r'([0-9]+)TB', r_title.replace(',', '.')), key=float):
+                            if float(i) > 0:
+#                                print(i)
+                                r_amino_price=math.ceil(r_price/(float(i)*1024))
+                                break
+
+                # 単価辺りの量が取得できなければDBに入れない
+                if (r_amino_price == r_price) and (fl['notation_unit'] is not None):
                     continue
-#                print(r_amino_price)
-#                print('')
-#                print('')
 
                 # 送料チェック
                 r_shipping_price=None

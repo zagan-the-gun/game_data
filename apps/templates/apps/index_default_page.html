@@ -141,15 +141,25 @@
           <div class='col-8 pl-0'>
             <div class='small'>{{ m.title|truncatechars:36 }}</div>
             <div>
+
+	      {% if small_category.notation_per_unit %}
               <span class='h2 text-danger'>
-                {{ m.amino_price }}
+                {{ m.amino_price|intcomma }}
               </span>
               <span class='small text-danger'>
-	        円/{{ small_category.notation_per_unit }}
+                円/{{ small_category.notation_per_unit }}
               </span>
               <span class='small'>
                 {{ m.price|intcomma }}円
               </span>
+              {% else %}
+              <span class='h2 text-danger'>
+                {{ m.amino_price|intcomma }}
+              </span>
+              <span class='small text-danger'>
+                円
+              </span>
+              {% endif %}
               {% if m.shipping_price == 0 %}
               <span class='text-danger small font-weight-bold'>
                 送料無料

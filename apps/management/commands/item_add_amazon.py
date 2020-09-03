@@ -43,7 +43,7 @@ class Command(BaseCommand):
         find_list=[]
         #Todo ここに検索するかどうかの条件入れる
         search_word = SearchWord.objects.all()
-        for sw in search_word:
+        for sw in reversed(search_word):
             # 検索対象判別
             if (sw.distributor == 1) or (sw.distributor == 4):
                 find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word, 'url_param': sw.url_param})
@@ -90,26 +90,23 @@ class Command(BaseCommand):
                     _p = re.search(r'([0-9.,]+)', div.find('span', class_='a-offscreen').get_text())
                     a_price = int(_p.group(1).replace(',', ''))
                 else:
-                    a_price = 0
+                    continue
 
                 a_amino_price = a_price
 
                 # 除外ワードのスキップ処理
                 exclusion_word = fl['exclusion_word'] or ''
+                exclusion = False
                 for ew in exclusion_word.split(' '):
                     if (ew or 'asdf') in a_title:
                         print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
                         print(ew)
                         print(a_title)
-                        continue
-#                for ew in exclusion_word.split(' '):
-#                    if ( ew or 'asdf') in r['Item']['itemCaption']:
-#                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
-#                        print(ew)
-#                        print(r['Item']['itemCaption'])
-#                        continue
+                        exclusion = True
+                if exclusion == True:
+                    exclusion = False
+                    continue
 
-#                print('単位: ' + fl['notation_unit'])
                 _a_title = a_title.translate(str.maketrans({chr(0xFF01 + i): chr(0x21 + i) for i in range(94)}))
                 if fl['notation_unit'] == 'g':
                     # タイトルから重量取得
@@ -153,8 +150,24 @@ class Command(BaseCommand):
 #                                a_amino_price=math.ceil(a_price/int(i))
 #                                break
 
-                # 単価が取得できなければDBに入れない
-                if a_amino_price == a_price:
+                elif fl['notation_unit'] == 'GB':
+                    # タイトルから重量取得
+                    for i in sorted(re.findall(r'([0-9]+)GB', _a_title), key=int):
+                        # 一番小さい数字を使って割る
+                        if int(i) > 1:
+#                            print(i)
+                            a_amino_price=math.ceil(a_price/int(i))
+                            break
+                    # 取得できなかったらTBでサーチ
+                    if a_amino_price == a_price:
+                        for i in sorted(re.findall(r'([0-9]+)TB', _a_title.replace(',', '.')), key=float):
+                            if float(i) > 0:
+#                                print(i)
+                                a_amino_price=math.ceil(a_price/(float(i)*1024))
+                                break
+
+                # 単価辺りの量が取得できなければDBに入れない
+                if (a_amino_price == a_price) and (fl['notation_unit'] is not None):
                     continue
 
                 a_site_url = 'https://www.amazon.co.jp/gp/product/' + div.get('data-asin') + '/ref=as_li_tl?ie=UTF8&tag=zagan06-22&camp=247&creative=1211&linkCode=as2&creativeASIN=' + div.get('data-asin')

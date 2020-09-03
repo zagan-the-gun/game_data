@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         find_list=[]
         search_word = SearchWord.objects.all()
-        for sw in search_word:
+        for sw in reversed(search_word):
             # 検索対象判別
             if (sw.distributor == 1) or (sw.distributor == 3):
                 find_list.append({'text': sw.word, 'tags': sw.tags.all(), 'notation_unit': sw.notation_unit, 'exclusion_word': sw.exclusion_word, 'url_param': sw.url_param})
@@ -34,18 +34,22 @@ class Command(BaseCommand):
             for y in yahoo_json['hits']:
                 # 除外ワードのスキップ処理
                 exclusion_word = fl['exclusion_word'] or ''
+                exclusion = False
                 for ew in exclusion_word.split(' '):
                     if (ew or 'asdf') in y['name']:
                         print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
                         print(ew)
                         print(y['name'])
-                        continue
+                        exclusion = True
                 for ew in exclusion_word.split(' '):
                     if ( ew or 'asdf') in y['description']:
                         print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
                         print(ew)
                         print(y['description'])
-                        continue
+                        exclusion = True
+                if exclusion == True:
+                    exclusion = False
+                    continue
 
                 #新方式になってこのifは不要
                 if (y not in ['Request', 'Modules', '_container', 'Hit', '']) and ('Query' not in y):
@@ -90,8 +94,22 @@ class Command(BaseCommand):
                                 y_amino_price=math.ceil(y_price/int(i))
                                 break
 
-                    # 単価が取得できなければDBに入れない
-                    if y_amino_price == y_price:
+                    elif fl['notation_unit'] == 'GB':
+                        # タイトルから重量取得
+                        for i in sorted(re.findall(r'([0-9]+)GB', y_title), key=int):
+                            # 一番小さい数字を使って割る
+                            if int(i) > 1:
+                                y_amino_price=math.ceil(y_price/int(i))
+                                break
+                        # 取得できなかったらTBでサーチ
+                        if y_amino_price == y_price:
+                            for i in sorted(re.findall(r'([0-9]+)TB', y_title.replace(',', '.')), key=float):
+                                if float(i) > 0:
+                                    y_amino_price=math.ceil(y_price/(float(i)*1024))
+                                    break
+
+                    # 単価辺りの量が取得できなければDBに入れない
+                    if (y_amino_price == y_price) and (fl['notation_unit'] is not None):
                         continue
 
                     # 送料チェック
