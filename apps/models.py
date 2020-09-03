@@ -188,7 +188,7 @@ class SearchWord(models.Model):
                     )
     exclusion_word = models.CharField(
                        verbose_name='除外ワード',
-                       max_length=20,
+                       max_length=200,
                        blank=True,
                        null=True,
                      )
