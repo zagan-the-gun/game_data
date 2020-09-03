@@ -62,7 +62,7 @@ class Command(BaseCommand):
                 driver.get('https://www.amazon.co.jp/s?k=' + fl_url + '&ref=nb_sb_noss' + fl['url_param'])
             except Exception as e:
                 print('DEBUG DEBUG DEBUG driver.get() skip')
-                driver.close()
+                #driver.close()
                 driver.quit()
                 continue
 
@@ -73,7 +73,7 @@ class Command(BaseCommand):
             except Exception as e:
                 print('DEBUG DEBUG DEBUG driver.close() skip')
                 driver.quit()
-                continue
+                #continue
 
             print('close browser:{}s'.format(datetime.datetime.now().timestamp() - START))
             driver.quit()
