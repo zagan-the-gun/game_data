@@ -9,6 +9,9 @@ import math
 
 import urllib.parse
 
+import datetime
+import pytz
+
 
 class Command(BaseCommand):
     help = '楽天情報収集'
@@ -28,10 +31,12 @@ class Command(BaseCommand):
             print('タグ: {} 検索文字列: {}'.format(u", ".join(s.name for s in fl['tags']), fl['text']))
 
             # 楽天からJSONで商品情報取得
+            # 除外キーワードに NGKeyword を使っても良い
             rakuten_url = 'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?format=json&keyword=' + fl_url + '&affiliateId=1b221d9c.03487084.1b221d9d.56b5e1b5&applicationId=1040781665970884363' + fl['url_param']
             rakuten_json = json.loads(requests.get(rakuten_url).text)
 
             for r in rakuten_json['Items']:
+
                 # 除外ワードのスキップ処理
                 exclusion_word = fl['exclusion_word'] or ''
                 exclusion = False
@@ -51,13 +56,18 @@ class Command(BaseCommand):
                     exclusion = False
                     continue
 
+                if r['Item']['endTime']:
+                    PERIOD_AT = pytz.timezone('Asia/Tokyo').localize(datetime.datetime.strptime(r['Item']['endTime'], '%Y-%m-%d %H:%M'))
+                else:
+                    PERIOD_AT = None
+
                 r_title            = r['Item']['itemName']
                 r_image_url        = r['Item']['mediumImageUrls'][0]['imageUrl']
                 r_site_url         = r['Item']['affiliateUrl']
                 r_description_text = r['Item']['itemCaption']
                 r_price            = r['Item']['itemPrice']
-
-                r_amino_price       = r['Item']['itemPrice']
+                r_amino_price      = r['Item']['itemPrice']
+                r_period_at        = PERIOD_AT
 #                print(r_title)
 #                print(r_price)
 #                print('単位' + fl['notation_unit'])
@@ -129,7 +139,7 @@ class Command(BaseCommand):
                     r_shipping_price=0
 
 #                print(fl['tags'])
-                Item.objects.update_or_create(site_url=r_site_url, defaults={'title': r_title, 'image_url': r_image_url, 'site_url': r_site_url, 'description_text': r_description_text, 'amino_price': r_amino_price, 'price': r_price, 'distributor': 'rakuten', 'shipping_price': r_shipping_price, })
+                Item.objects.update_or_create(site_url=r_site_url, defaults={'title': r_title, 'image_url': r_image_url, 'site_url': r_site_url, 'description_text': r_description_text, 'amino_price': r_amino_price, 'price': r_price, 'distributor': 'rakuten', 'shipping_price': r_shipping_price, 'period_at': r_period_at})
                 item = Item.objects.get(site_url=r_site_url)
                 for tag in fl['tags']:
                     item.tags.add(tag)

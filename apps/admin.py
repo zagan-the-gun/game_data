@@ -15,7 +15,7 @@ class ItemAdmin(admin.ModelAdmin):
 #        ('Date information', {'fields': ['release_date'], 'classes': ['collapse']}),
 #    ]
 #    inlines = [PlatformInline]
-    list_display = ('pk', 'title', 'amino_price', 'price', 'distributor', 'tag_list', 'created_at', 'updated_at', 'active')
+    list_display = ('pk', 'title', 'amino_price', 'price', 'distributor', 'tag_list', 'period_at', 'created_at', 'updated_at', 'active')
 #    list_filter = ['release_date']
     search_fields = ['title', 'description_text', 'distributor', 'tags__name', 'site_url']
 

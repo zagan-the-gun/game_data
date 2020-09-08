@@ -61,6 +61,45 @@
     text-align: center;
     z-index: 2;
   }
+
+  .normalbox {
+    position: relative;
+  }
+  .normalbox a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    width: 100%;
+  }
+  .normalbox a:hover{/* マウスオーバー時に色変更*/
+    opacity: 0.1;
+    background-color: #000000;
+  }
+
+  .linkbox {
+    position: relative;
+  }
+  .linkbox a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height:100%;
+    width: 100%;
+  }
+  /* 以下見た目をわかりやすくするための設定*/
+  .linkbox {
+  /*    border: solid 2px #ff0000;*/
+    border-top: solid 2px #ff0000;
+    border-left: solid 2px #ff0000;
+    border-right: solid 2px #ff0000;
+    border-bottom: solid 2px #ff0000;
+  }
+  .linkbox a:hover{/* マウスオーバー時に色変更*/
+    opacity: 0.1;
+    background-color: #000000;
+  }
+
 </style>
 
 <!-- 上に戻るボタン -->
@@ -116,7 +155,77 @@
 {% if item %} 
   {% lazy_paginate item %} 
   {% for m in item %}
-      <div class='col-12' style='padding:10px 0px 10px 0px;'>
+    {% if m.period_at %}
+      <div class='col-12 linkbox' style='padding:0px 0px 10px 0px;'>
+          <div class='px-0'>
+            <img class="img-fluid" src='{{ m.image_url }}' />
+          </div>
+          <div class='col-12'>
+            <div class='row'>
+              <div class='col-12 small bold'>{{ m.title }}</div>
+              <div class='col-6'>
+                <h1>
+                  <div class='badge badge-danger'>
+                    セール中
+                  </div>
+                </h1>
+              </div>
+              <div class='col-6 text-right'>
+                <span class='h1 text-danger'>
+                  {{ m.amino_price }}
+                </span>
+                <span class='text-danger'>
+                  円/1MB
+                </span>
+              </div>
+              <u class='col-7 pr-0 small'>
+                {{ m.period_at|date:'Y年m月d日 G時i分' }}まで
+              </u>
+              <div class='col-5 pl-0 text-right'>
+                {% if m.original_price != 0 %}
+                <s class='small'>
+                  {{ m.original_price|intcomma }}円
+                </s>
+                <span class='small text-danger'>
+                  {{ m.price|intcomma }}円
+                </span>
+                <span class='small'>
+                  /{{ m.size }}MB
+                </span>
+                {% else %}
+                <span class='small'>
+                  {{ m.price|intcomma }}円
+                </span>
+                {% endif %}
+                {% if m.shipping_price == 0 %}
+                <span class='text-danger small font-weight-bold'>
+                  送料無料
+                {% elif m.shipping_price > 0 %}
+                <span class='small'>
+                  送料 {{ m.shipping_price }} 円
+                {% endif %}
+              </div>
+              <div class='col-6 small d-flex align-items-end py-0'>
+                {{ m.updated_at|naturaltime}}
+              </div>
+              <div class='col-6 small py-0'>
+              {% if m.distributor == 'rakuten' %}
+              <img class='float-right' src={% static 'apps/rakuten_logo2.png' %} height='20' />
+              {% elif m.distributor == 'yahoo' %}
+              <img class='float-right' src={% static 'apps/yahoo_logo2.jpg' %} height='18' />
+              {% elif m.distributor == 'amazon' %}
+              <img class='float-right' src={% static 'apps/amazon_logo2.png' %} height='18' />
+              {% else %}
+              <span class='float-right'>{{ m.distributor }}</span>
+              {% endif %}
+              </div>
+            </div>
+          </div>
+          <a href='{{ m.site_url }}' class='stretched-link' target='_blank'></a>
+      </div>
+
+    {% else %}
+      <div class='col-12 normalbox' style='padding:10px 0px 10px 0px;'>
         <div class='media position-relative'>
           <div class='col-4' style='position: relative;'>
           <!-- シェアのドロップダウン機能 -->
@@ -185,6 +294,7 @@
           </div>
       </div>
       </div>
+    {% endif %}
   {% endfor %}
   {% show_more %}
 {% endif %}
