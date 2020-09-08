@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'el_pagination',
     'taggit',
     'django_cleanup',
+    'apps.templatetags.cut',
 ]
 
 MIDDLEWARE = [

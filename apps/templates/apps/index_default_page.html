@@ -152,13 +152,14 @@
 <div class='container'>
   <div class='row'>
 
+{% load cut %}
 {% if item %} 
   {% lazy_paginate item %} 
   {% for m in item %}
     {% if m.period_at %}
       <div class='col-12 linkbox' style='padding:0px 0px 10px 0px;'>
           <div class='px-0'>
-            <img class="img-fluid" src='{{ m.image_url }}' />
+            <img class="img-fluid" src='{{ m.image_url|cut:"?_ex=128x128" }}' />
           </div>
           <div class='col-12'>
             <div class='row'>
