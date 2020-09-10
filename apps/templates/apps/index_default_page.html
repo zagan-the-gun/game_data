@@ -167,7 +167,11 @@
               <div class='col-6'>
                 <h1>
                   <div class='badge badge-danger'>
+                  {% if m.discount_rate %}
+                    {{ m.discount_rate }}%OFF
+                  {% else %}
                     セール中
+                  {% endif %}
                   </div>
                 </h1>
               </div>

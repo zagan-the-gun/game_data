@@ -9,6 +9,9 @@ import math
 
 import urllib.parse
 
+import datetime
+import pytz
+
 
 class Command(BaseCommand):
     help = 'Yahoo情報収集'
@@ -37,15 +40,15 @@ class Command(BaseCommand):
                 exclusion = False
                 for ew in exclusion_word.split(' '):
                     if (ew or 'asdf') in y['name']:
-                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
-                        print(ew)
-                        print(y['name'])
+#                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
+#                        print(ew)
+#                        print(y['name'])
                         exclusion = True
                 for ew in exclusion_word.split(' '):
                     if ( ew or 'asdf') in y['description']:
-                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
-                        print(ew)
-                        print(y['description'])
+#                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
+#                        print(ew)
+#                        print(y['description'])
                         exclusion = True
                 if exclusion == True:
                     exclusion = False
@@ -53,12 +56,27 @@ class Command(BaseCommand):
 
                 #新方式になってこのifは不要
                 if (y not in ['Request', 'Modules', '_container', 'Hit', '']) and ('Query' not in y):
+                    PERIOD_AT = None
+                    DISCOUNT_RATE = 0
+                    if y['premiumDiscountType'] == 'sale':
+
+                        if y['priceLabel']['periodEnd']:
+                            PERIOD_AT = pytz.timezone('Asia/Tokyo').localize(datetime.datetime.fromtimestamp(y['priceLabel']['periodEnd']))
+
+                        if y['premiumDiscountRate']:
+                            DISCOUNT_RATE = y['premiumDiscountRate']
+
                     y_title            = y['name']
                     y_image_url        = y['image']['medium']
                     y_site_url         = y['url']
                     y_description_text = y['description']
                     y_price            = int(y['price'])
                     y_amino_price       = int(y['price'])
+
+                    #y_size
+                    #y_original_price
+                    y_discount_rate    = DISCOUNT_RATE
+                    y_period_at        = PERIOD_AT
 
                     if fl['notation_unit'] == 'g':
                         # タイトルから重量取得
@@ -117,7 +135,8 @@ class Command(BaseCommand):
                     if int(y['shipping']['code']) == 2:
                         y_shipping_price=0
 
-                    Item.objects.update_or_create(site_url=y_site_url, defaults={'title': y_title, 'image_url': y_image_url, 'site_url': y_site_url, 'description_text': y_description_text, 'amino_price': y_amino_price, 'price': y_price, 'distributor': 'yahoo', 'shipping_price': y_shipping_price})
+                    #Item.objects.update_or_create(site_url=y_site_url, defaults={'title': y_title, 'image_url': y_image_url, 'site_url': y_site_url, 'description_text': y_description_text, 'amino_price': y_amino_price, 'price': y_price, 'distributor': 'yahoo', 'shipping_price': y_shipping_price})
+                    Item.objects.update_or_create(site_url=y_site_url, defaults={'title': y_title, 'image_url': y_image_url, 'site_url': y_site_url, 'description_text': y_description_text, 'amino_price': y_amino_price, 'price': y_price, 'distributor': 'yahoo', 'shipping_price': y_shipping_price, 'discount_rate': y_discount_rate, 'period_at': y_period_at})
                     item = Item.objects.get(site_url=y_site_url)
                     for tag in fl['tags']:
                         item.tags.add(tag)
