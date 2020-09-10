@@ -40,15 +40,15 @@ class Command(BaseCommand):
                 exclusion = False
                 for ew in exclusion_word.split(' '):
                     if (ew or 'asdf') in y['name']:
-#                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
-#                        print(ew)
-#                        print(y['name'])
+                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
+                        print(ew)
+                        print(y['name'])
                         exclusion = True
                 for ew in exclusion_word.split(' '):
                     if ( ew or 'asdf') in y['description']:
-#                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
-#                        print(ew)
-#                        print(y['description'])
+                        print('DEBUG DEBUG DEBUG exclusion_word HIT!: ')
+                        print(ew)
+                        print(y['description'])
                         exclusion = True
                 if exclusion == True:
                     exclusion = False
@@ -65,9 +65,22 @@ class Command(BaseCommand):
 
                         if y['premiumDiscountRate']:
                             DISCOUNT_RATE = y['premiumDiscountRate']
+                        print('セール')
+
+                    try:
+                        IMAGE_URL = y['exImage']['url']
+                        print(IMAGE_URL)
+                        print(y['name'])
+                        print()
+                        print()
+                        print()
+
+                    except Exception as e:
+                        IMAGE_URL = y['image']['medium']
 
                     y_title            = y['name']
-                    y_image_url        = y['image']['medium']
+                    #y_image_url        = y['image']['medium']
+                    y_image_url        = IMAGE_URL
                     y_site_url         = y['url']
                     y_description_text = y['description']
                     y_price            = int(y['price'])
